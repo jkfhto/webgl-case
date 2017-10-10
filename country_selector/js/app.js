@@ -55,7 +55,7 @@ function init() {
     base_globe.scale.set(20, 20, 20);
     scene.add(base_globe);
 
-    sea_texture = THREE.ImageUtils.loadTexture('textures/sea.jpg', THREE.UVMapping, function () {
+    sea_texture = THREE.ImageUtils.loadTexture('css/sea.jpg', THREE.UVMapping, function () {
         sea_texture.wrapS = THREE.RepeatWrapping;
         sea_texture.wrapT = THREE.RepeatWrapping;
         sea_texture.repeat.set(16, 8);
@@ -65,6 +65,7 @@ function init() {
             transparent: true,
             depthTest: true,
             depthWrite: false,
+            // wireframe:true,
             opacity: 0.95,
             map: sea_texture,
             color: 0x6699ff
@@ -132,7 +133,7 @@ function onDocumentMouseMove(event) {
                 }
                 overlay_element.innerHTML = intersects[0].object.userData.country;
 
-                intersects[0].object.scale.set(hover_scale, hover_scale, hover_scale);
+                intersects[0].object.scale.set(hover_scale, hover_scale, hover_scale);//选择突出显示
                 intersected_object = intersects[0].object;
             } else {
                 overlay_element.innerHTML = "";
