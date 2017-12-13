@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - arraycamera</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				margin: 0px;
+				background-color: #000000;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="js/three.js"></script>
+        <script src="js/OrbitControls.js"></script>
+		<script>
+			var camera, scene, renderer;
+			var mesh,obj;
+			var leaves = [];
+			var DirectionalLight
+			init();
+			animate();
+			function init() {
+
+				var AMOUNT = 6;
+				var SIZE = 1 / AMOUNT;
+				var ASPECT_RATIO = window.innerWidth / window.innerHeight;
+
+                camera = new THREE.PerspectiveCamera( 75, ASPECT_RATIO, 0.1, 100000 );
+				camera.position.z=8;
+				// camera.position.z = 23;
+				// camera.position.y = 23;
+
+				scene = new THREE.Scene();
+
+				scene.add( new THREE.AmbientLight( 0x222244 ) );
+
+			    DirectionalLight = new THREE.DirectionalLight();
+				DirectionalLight.position.set( 0.5, 10.5, 10 );
+				DirectionalLight.castShadow = true;
+				// DirectionalLight.shadow.camera.zoom = 4; // tighter shadow map
+				scene.add( DirectionalLight );
+
+				var light = new THREE.PointLight( 0xff0000, 1, 100 );
+				light.position.set( 0, -1, 0 );
+				scene.add( light );
+
+				const MAX_LIFE = 7;
+
+				// var scope = this;
+
+				var geometry = new THREE.CubeGeometry(1,1,1);
+				geometry.translate( 0, 0.5, 0 );
+
+				var material = new THREE.MeshBasicMaterial( { color: 0x121212 } );
+				var material2 = new THREE.MeshStandardMaterial( { color: 0xffffff } );
+
+				var tree = new THREE.Group();
+				var root = new THREE.Mesh( geometry, material );
+				root.castShadow = true;
+				root.receiveShadow = true;
+
+				function addBranch( child, life ) {//绘制树 life记录层级
+
+					var progress = 1.05 - ( life / MAX_LIFE );//越向上枝干越细
+					
+					var scale = child.scale.y - Math.random() / 5;
+					child.scale.set( progress / 10, scale, progress / 10 );
+
+					if ( life > 0 ) {//枝干随机延伸
+						child.translateY( scale );
+						child.rotation.x += Math.random() - 0.5;
+						child.rotation.y += Math.random() - 0.5;
+						child.rotation.z += Math.random() - 0.5;
+					}
+					child.updateMatrix();//关键代码 更新child
+					tree.add( child );
+                    var childnum=5;
+					if ( life <  Math.random() * MAX_LIFE ) {//创建枝干 MAX_LIFE：最大层级树  Math.random() * MAX_LIFE：MAX_LIFE不乘以Math.random() 那么每层父类都会向上延伸childnum个子类  乘以Math.random() 那么向上延伸的子类个数随机
+					
+						life = life + 1;
+						
+						
+						for ( var i = 0; i < childnum; i ++ ) {//关键代码 childnum设置每层父类包含的子类个数
+							
+
+							if ( Math.random() > 0.1 ) {//判断是否继续向上延伸子类 
+								
+								addBranch( child.clone(), life );//递归调用 生成枝干
+								
+							}
+
+						}
+						
+					} else {//创建叶子
+
+						if ( Math.random() > 0.7 ) {
+							var leaf = child.clone();
+							leaf.material = material2.clone();
+							leaf.translateY( leaf.scale.y );
+							leaf.scale.setScalar( 0.1 + Math.random() * 0.1 );
+							leaf.userData.life = life;
+							scene.add( leaf );
+							leaves.push( leaf );
+						}
+					}
+					
+				}
+
+				addBranch( root, 0 );
+
+				// Merge branches
+
+				var geometry = new THREE.Geometry();
+
+				for ( var i = 0; i < tree.children.length; i ++ ) {
+					
+					var branch = tree.children[ i ];
+					geometry.merge( branch.geometry, branch.matrix );
+					
+				}
+
+				scene.add( new THREE.Mesh( geometry, material ) );
+	                 
+	                
+	  
+					renderer = new THREE.WebGLRenderer();
+					renderer.setPixelRatio( window.devicePixelRatio );
+					renderer.setSize( window.innerWidth, window.innerHeight );
+					renderer.shadowMap.enabled = true;
+					document.body.appendChild( renderer.domElement );
+					controls=new THREE.OrbitControls(camera,renderer.domElement);
+
+					window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+				for ( var i = 0; i < leaves.length; i ++ ) {
+
+					var leaf = leaves[ i ];
+					var life = leaf.userData.life * 1000;
+
+					var sin = Math.sin( ( life - performance.now()) / 2000 ) * 0.25 + 0.25;
+
+					leaf.material.emissive.setRGB( sin, 0, 0.25 );//更新叶子颜色
+
+				}
+				
+				// DirectionalLight.color.copy( leaves[ 0 ].material.emissive );
+				renderer.render( scene, camera );
+
+				requestAnimationFrame( animate );
+
+			}
+
+
+
+		</script>
+
+	</body>
+</html>
