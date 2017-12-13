@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - arraycamera</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				margin: 0px;
+				background-color: #000000;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="js/three.js"></script>
+        <!-- <script src="../js/OrbitControls.js"></script> -->
+		<script>
+
+			var camera, scene, renderer;
+			var mesh,obj;
+
+			init();
+			animate();
+
+			function init() {
+
+				var AMOUNT = 6;
+				var SIZE = 1 / AMOUNT;
+				var ASPECT_RATIO = window.innerWidth / window.innerHeight;
+
+                camera = new THREE.PerspectiveCamera( 75, ASPECT_RATIO, 0.1, 100000 );
+				
+				camera.position.z = 23;
+				camera.position.y = 3;
+
+				scene = new THREE.Scene();
+
+				scene.add( new THREE.AmbientLight( 0x222244 ) );
+
+				var light = new THREE.DirectionalLight();
+				light.position.set( 0.5, 0.5, 1 );
+				light.castShadow = true;
+				light.shadow.camera.zoom = 4; // tighter shadow map
+				scene.add( light );
+
+				var geometry = new THREE.PlaneBufferGeometry( 100, 100 );
+				var material = new THREE.MeshPhongMaterial( { color: 0x000066 } );
+
+				var background = new THREE.Mesh( geometry, material );
+				background.receiveShadow = true;
+				background.position.set( 0, 0, - 1 );
+				// scene.add( background );
+
+				var geometry = new THREE.SphereGeometry( 10, 32, 32 );
+				var material = new THREE.MeshBasicMaterial( {color: 0x000000} );
+				var sphere = new THREE.Mesh( geometry, material );
+				scene.add( sphere );
+                
+                obj=new THREE.Object3D()
+				var geometry = createGeometry( 20000, 20 );
+				var material = new THREE.PointsMaterial( {
+					size: 4,
+					map: createTexture( 'rgba(0,0,15,1)', 'rgba(0,0,0,0)'  ),
+					depthWrite: false,
+					transparent: true
+				} );
+
+				var points = new THREE.Points( geometry, material );
+				obj.add( points );
+
+				var geometry = createGeometry( 20000, 20 );
+				var material = new THREE.PointsMaterial( {
+					size: 4,
+					map: createTexture( 'rgba(15,0,15,1)', 'rgba(0,0,0,0)'  ),
+					depthWrite: false,
+					transparent: true
+				} );
+
+				var points = new THREE.Points( geometry, material );
+				points.rotation.y = Math.PI;
+				obj.add( points );
+
+				// //
+
+				var geometry = createGeometry( 20000, 8 );
+				var material = new THREE.PointsMaterial( {
+					size: 0.4,
+					map: createTexture( 'rgba(255,205,255,1)', 'rgba(0,0,0,0)' ),
+					blending: THREE.AdditiveBlending,
+					depthWrite: false,
+					transparent: true
+				} );
+
+				var points = new THREE.Points( geometry, material );
+				obj.add( points );
+
+				var geometry = createGeometry( 20000, 8 );
+				var material = new THREE.PointsMaterial( {
+					size: 0.4,
+					map: createTexture( 'rgba(255,255,200,1)', 'rgba(0,0,0,0)' ),
+					blending: THREE.AdditiveBlending,
+					depthWrite: false,
+					transparent: true
+				} );
+
+				var points = new THREE.Points( geometry, material );
+				points.rotation.y = Math.PI;
+				obj.add( points );
+                
+				// //
+
+				// //
+
+				var geometry = createGeometry( 20000, 0.4 );
+				var material = new THREE.PointsMaterial( {
+					size: 0.25,
+					map: createTexture( 'rgba(205,205,255,1)', 'rgba(0,0,0,0)' ),
+					blending: THREE.AdditiveBlending,
+					depthWrite: false,
+					transparent: true
+				} );
+
+				var points = new THREE.Points( geometry, material );
+				obj.add( points );
+
+				var geometry = createGeometry( 20000, 0.4 );
+				var material = new THREE.PointsMaterial( {
+					size: 0.25,
+					map: createTexture( 'rgba(255,200,255,1)', 'rgba(0,0,0,0)' ),
+					blending: THREE.AdditiveBlending,
+					depthWrite: false,
+					transparent: true
+				} );
+
+				var points = new THREE.Points( geometry, material );
+				points.rotation.y = Math.PI;
+				obj.add( points );
+                 
+                scene.add(obj);
+                
+                 
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.shadowMap.enabled = true;
+				document.body.appendChild( renderer.domElement );
+				// controls=new THREE.OrbitControls(camera,renderer.domElement);
+
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				obj.rotation.x += 0.0005;
+				obj.rotation.y += 0.001;
+
+				renderer.render( scene, camera );
+
+				requestAnimationFrame( animate );
+
+			}
+			function random() { return Math.random() * 2 - 1 }
+
+			function createGeometry( amount, step ) {
+
+				var vertices = [];
+
+				for ( var i = 2000; i < amount; i += step ) {
+
+					var angle = i / 1200;//控制角度
+					var distance = i / 600;//控制半径
+					var progress = ( i / amount ) * 4 + 0.5;//控制偏移
+
+					vertices.push(
+						progress * random() * random() + Math.sin( angle ) * distance,
+						progress * random() * random(),
+						progress * random() * random() + Math.cos( angle ) * distance
+					);
+
+				}
+				
+				var geometry = new THREE.BufferGeometry();
+				geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+				
+				return geometry;
+
+			}
+
+			function createTexture( from, to ) {//创建贴图
+				var canvas = document.createElement( 'canvas' );
+				canvas.width = 16;
+				canvas.height = 16;
+				var context = canvas.getContext( '2d' );
+				var gradient = context.createRadialGradient( 8, 8, 0, 8, 8, 8 );
+				gradient.addColorStop( 0, from );
+				gradient.addColorStop( 1, to );
+				context.fillStyle = gradient;
+				context.fillRect( 0, 0, canvas.width, canvas.height );
+				return new THREE.CanvasTexture( canvas );
+			}
+
+			//
+
+
+		</script>
+
+	</body>
+</html>
