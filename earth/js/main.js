@@ -1,7 +1,7 @@
 var camera, scene, renderer;
 var mesh,obj;
 var DirectionalLight
-var cloudsphere,pointsNum=80,fdNum=50;
+var cloudsphere,pointsNum=80,fdNum=50,pointsIndex=0;
 var earthSphere,stats;
 var uniformsArr=[],splineArr=[],lengthArr=[],particlesArr=[],lineArr=[];
 init();
@@ -108,8 +108,9 @@ function rotateAroundWorldAxis(object, axis, radians) {
     object.matrix = rotWorldMatrix;
     object.rotation.setFromRotationMatrix(object.matrix);
 }
-function addline_points(num){
+function addline_points(index,num){
 	pointsNum=num!=undefined?num:pointsNum;
+    pointsIndex=index!=undefined?index:pointsIndex;
 	JSQEX_removeall();
 	var positionsAll=[],uvsAll=[],colorsAll=[],sizesAll=[];
     for(var ii=0;ii<pointsNum;ii+=2){
