@@ -66,7 +66,6 @@ var Globe = function(){
 	}
 
 	this.onWindowResize = function() {
-		console.log(this)
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 		renderer.setSize( window.innerWidth, window.innerHeight );
