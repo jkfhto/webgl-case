@@ -5,7 +5,7 @@ var Globe = function(){
 	var cloudsphere,pointsNum=40,fdNum=50;
 	var earthSphere,stats;
 	var uniformsArr=[],splineArr=[],lengthArr=[],particlesArr=[],lineArr=[],pointsIndex=0;
-	var Start_random=true,Num_random=true;
+	var Start_random=true,Rotate_points=false;
 	var scope=this;
 	this.init = function() {
 	    stats = new Stats();
@@ -66,6 +66,7 @@ var Globe = function(){
 	}
 
 	this.onWindowResize = function() {
+		console.log(this)
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
 		renderer.setSize( window.innerWidth, window.innerHeight );
@@ -78,11 +79,13 @@ var Globe = function(){
 		var time = Date.now();
 		var looptime = 20 * 100;//设置速度
 		var t = ( time % looptime ) / looptime;//限制在[0,1]范围
-		var tt = ( time % looptime ) ;
-		for(var i=0;i<pointsNum/2;i++){
-			uniformsArr[i].time.value +=lengthArr[i]/500 ;
-			var axis = new THREE.Vector3().copy(lineArr[i].rotate_z);//向量axis
-	        lineArr[i].rotateOnAxis(axis,.01)
+		// var tt = ( time % looptime ) ;
+		if(Rotate_points){
+			for(var i=0;i<pointsNum/2;i++){
+				uniformsArr[i].time.value +=lengthArr[i]/500 ;
+				var axis = new THREE.Vector3().copy(lineArr[i].rotate_z);//向量axis
+		        lineArr[i].rotateOnAxis(axis,.01)
+			}
 		}
 		renderer.render( scene, camera );
 		requestAnimationFrame( scope.animate );
@@ -113,7 +116,7 @@ var Globe = function(){
 	}
 
 	this.addline_points=function(){
-		// pointsNum=num!=undefined?num:Start_random?40:Math.floor(40+Math.random()*100);
+		// pointsNum=num!=undefined?num:Start_random?2:Math.floor(2+Math.random()*100);
 	    pointsIndex=Math.floor(Math.random()*300);
 		this.JSQEX_removeall();
 		var positionsAll=[],uvsAll=[],colorsAll=[],sizesAll=[];
@@ -131,10 +134,11 @@ var Globe = function(){
 	        var num=28;  
 	        var _arr=[];
 	        for(var i=0;i<=num;i++){
-	        	_arr.push(new THREE.Vector3(X.x*Math.cos(i/num*Math.PI*2)+Y.x*Math.sin(i/num*Math.PI*2),
-	        		                        X.y*Math.cos(i/num*Math.PI*2)+Y.y*Math.sin(i/num*Math.PI*2),
-	        		                        X.z*Math.cos(i/num*Math.PI*2)+Y.z*Math.sin(i/num*Math.PI*2)
-	                      ).multiplyScalar(length))
+	        	_arr.push(new THREE.Vector3(
+		        		      X.x*Math.cos(i/num*Math.PI*2)+Y.x*Math.sin(i/num*Math.PI*2),
+		        		      X.y*Math.cos(i/num*Math.PI*2)+Y.y*Math.sin(i/num*Math.PI*2),
+		        		      X.z*Math.cos(i/num*Math.PI*2)+Y.z*Math.sin(i/num*Math.PI*2)).multiplyScalar(length)
+	                    )
 	        }
 			var spline = new THREE.CatmullRomCurve3(_arr);
 			splineArr.push(spline);
@@ -163,7 +167,6 @@ var Globe = function(){
 					type: "f",
 					value: 0.1
 				}
-
 			}
 			uniformsArr.push(uniforms);
 			var vertexShader="varying vec2 vUv;\n"+
@@ -179,9 +182,9 @@ var Globe = function(){
 	            "uniform float time;\n"+
 	            "varying vec3 vColor;\n"+
 				"void main()	{\n"+
-				"	float aa=(vUv.x-.5+time);\n"+
-				"	float dd=step(1.57,aa)*1.57;\n"+
-				"	gl_FragColor = vec4(vColor, sin(dd) );\n"+
+				"	//float aa=(vUv.x-.5+time);\n"+
+				"	//float dd=step(1.57,aa)*1.57;\n"+
+				"	//gl_FragColor = vec4(vColor, sin(dd) );\n"+
 				"	// gl_FragColor = vec4(vColor, sin(2.0*(vUv.x*3.0+time)));\n"+
 				"	gl_FragColor = vec4(vColor, 1.);\n"+
 				"	// if(gl_FragColor.a < 0.5) discard;\n"+
@@ -238,19 +241,18 @@ var Globe = function(){
 	this.addGui=function(){
 		var API = {
 					'Start random'    	: true,
-					// 'Num random'		: true,
+					'Rotate points'		: false,
 					'Num points'		: pointsNum,
 				};
 		var gui = new dat.GUI();
-		gui.add( API, 'Start random' ).onChange( function() {
-				Start_random = API[ 'show model' ];
+		gui.add( API, 'Start random' ).onChange( function(val) {
+				Start_random = val;
 				scope.addline_points();
 		} );
-		// gui.add( API, 'Num random' ).onChange( function() {
-		// 		Num_random = API[ 'Num random' ];
-		// 		scope.addline_points();
-		// } );
-		gui.add( API, 'Num points' ,40, 200, 1).onChange( function(val) {
+		gui.add( API, 'Rotate points' ).onChange( function(val) {
+				Rotate_points=val;
+		} );
+		gui.add( API, 'Num points' ,40, 200, 2).onChange( function(val) {
 				pointsNum=val;
 				scope.addline_points();
 		} );
