@@ -2,7 +2,7 @@ var Globe = function(){
 	var camera, scene, renderer;
 	var mesh,obj;
 	var DirectionalLight
-	var cloudsphere,pointsNum=40,fdNum=50;
+	var cloudsphere,pointsNum=40,fdNum=50,pointsSize=.5;
 	var earthSphere,stats;
 	var uniformsArr=[],splineArr=[],lengthArr=[],particlesArr=[],lineArr=[],pointsIndex=0;
 	var Start_random=true,Rotate_points=false;
@@ -119,7 +119,7 @@ var Globe = function(){
 		// pointsNum=num!=undefined?num:Start_random?2:Math.floor(2+Math.random()*100);
 	    pointsIndex=Math.floor(Math.random()*300);
 		this.JSQEX_removeall();
-		var positionsAll=[],uvsAll=[],colorsAll=[],sizesAll=[];
+		// var positionsAll=[],uvsAll=[],colorsAll=[],sizesAll=[];
 	    for(var ii=0;ii<pointsNum;ii+=2){
 	    	var position1=latlngPosFromLatLng(locations[Start_random?ii:pointsIndex].lat,locations[Start_random?ii:pointsIndex].lng,4.05);
 			var position2=latlngPosFromLatLng(locations[ii+1].lat,locations[ii+1].lng,4.05);
@@ -155,8 +155,8 @@ var Globe = function(){
 			   colors[ ( 3 * i )     ] = color.r;
 			   colors[ ( 3 * i ) + 1 ] = color.g;
 			   colors[ ( 3 * i ) + 2 ] = color.b;
-			   sizes[ i ] = .2+Math.random();
-			   sizesAll.push(.7)
+			   sizes[ i ] = pointsSize+Math.random();
+			   // sizesAll.push(.7)
 			}
 			var geometry=new THREE.BufferGeometry();
 			geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ) );
@@ -243,6 +243,7 @@ var Globe = function(){
 					'Start random'    	: true,
 					'Rotate points'		: false,
 					'Num points'		: pointsNum,
+					'Size points'       : pointsSize,   
 				};
 		var gui = new dat.GUI();
 		gui.add( API, 'Start random' ).onChange( function(val) {
@@ -254,6 +255,10 @@ var Globe = function(){
 		} );
 		gui.add( API, 'Num points' ,40, 200, 2).onChange( function(val) {
 				pointsNum=val;
+				scope.addline_points();
+		} );
+		gui.add( API, 'Size points' ,.5, 2, .1).onChange( function(val) {
+				pointsSize=val;
 				scope.addline_points();
 		} );
 	}
