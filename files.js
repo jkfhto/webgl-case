@@ -1,7 +1,7 @@
 var files = {
 	"webgl": [
-		"webgl_树",
-		"webgl_地球",
+		"树_tree/index.html",
+		"地球_earth/index.html",
 	],
 	"webgl / advanced": [
 		"webgl_buffergeometry",

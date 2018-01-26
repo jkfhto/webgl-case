@@ -291,8 +291,8 @@
 
 			var link = document.createElement( 'a' );
 			link.className = 'link';
-			link.href = file + '.html';
-			link.textContent = getName( file );
+			link.href = getName2( file ,1) + '.html';
+			link.textContent = getName2( file ,0 );
 			link.setAttribute( 'target', 'viewer' );
 			link.addEventListener( 'click', function ( event ) {
 
@@ -436,6 +436,12 @@
 			var name = file.split( '_' );
 			name.shift();
 			return name.join( ' / ' );
+
+		}
+		function getName2(file,num ) {
+
+			var name = file.split( '_' );
+			return name[num];
 
 		}
 
