@@ -3,6 +3,7 @@ var files = {
 		"树_tree/index",
 		"地球_earth/index",
 		"星空_galaxy/index",
+		"管道_pipeline/index",
 	],
 	"webgl / advanced": [
 		"webgl_buffergeometry",
