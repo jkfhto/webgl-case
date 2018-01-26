@@ -2,6 +2,7 @@ var files = {
 	"webgl": [
 		"树_tree/index",
 		"地球_earth/index",
+		"星空_galaxy/index",
 	],
 	"webgl / advanced": [
 		"webgl_buffergeometry",
