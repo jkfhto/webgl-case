@@ -19814,15 +19814,18 @@
 
 					switch ( blending ) {
 						//blendFunc，使用这个函数可以给源颜色和目标颜色分别设置不同的混合系数
-						//blendEquation函数中指定的内置常量  相对应的就是blendEquationSeparate函数了。使用这个函数，就能对RGB颜色和透明度分别进行设置了
-	                    //gl.FUNC_ADD：源颜色 + 目标颜色
-	                    //gl.FUNC_SUBTRACT：源颜色 - 目标颜色
-	                    //gl.FUNC_REVERSE_SUBTRACT：目标颜色 - 源颜色
-	                    //blendFuncSeparate 函数
+						//blendFuncSeparate 函数
 						//第一个参数：源颜色(SRC)的混合系数
 						//第二个参数：目标颜色(DST)的混合系数
 						//第三个参数：源颜色(SRC)的透明度的混合系数
 						//第四个参数：目标颜色(DST)的透明度的混合系数
+						//blendEquation:指定颜色混合的方式  
+                        //gl.FUNC_ADD：源颜色 + 目标颜色
+	                    //gl.FUNC_SUBTRACT：源颜色 - 目标颜色
+	                    //gl.FUNC_REVERSE_SUBTRACT：目标颜色 - 源颜色
+						//blendEquationSeparate:使用这个函数，就能对RGB颜色和透明度分别设置混合的方式
+	                    
+	                   
 						case AdditiveBlending:
 
 							if ( premultipliedAlpha ) {
@@ -19955,11 +19958,11 @@
 
 				if ( flipSided ) {
 
-					gl.frontFace( gl.CW );
+					gl.frontFace( gl.CW );//设置顺时针多边形为正面
 
 				} else {
 
-					gl.frontFace( gl.CCW );
+					gl.frontFace( gl.CCW );//设置逆时针多边形为正面
 
 				}
 
@@ -19973,21 +19976,21 @@
 
 			if ( cullFace !== CullFaceNone ) {
 
-				enable( gl.CULL_FACE );
+				enable( gl.CULL_FACE );//开启面剔除
 
 				if ( cullFace !== currentCullFace ) {
 
 					if ( cullFace === CullFaceBack ) {
 
-						gl.cullFace( gl.BACK );
+						gl.cullFace( gl.BACK );//剔除背向面
 
 					} else if ( cullFace === CullFaceFront ) {
 
-						gl.cullFace( gl.FRONT );
+						gl.cullFace( gl.FRONT );//剔除正向面
 
 					} else {
 
-						gl.cullFace( gl.FRONT_AND_BACK );
+						gl.cullFace( gl.FRONT_AND_BACK );//剔除正向面和背向面
 
 					}
 
@@ -19995,7 +19998,7 @@
 
 			} else {
 
-				disable( gl.CULL_FACE );
+				disable( gl.CULL_FACE );//禁止面剔除
 
 			}
 
