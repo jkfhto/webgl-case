@@ -19012,6 +19012,13 @@
 			var glType = utils.convert( renderTarget.texture.type );//获取数据类型
 			state.texImage2D( textureTarget, 0, glFormat, renderTarget.width, renderTarget.height, 0, glFormat, glType, null );//设置纹理参数
 			_gl.bindFramebuffer( _gl.FRAMEBUFFER, framebuffer );//绑定帧缓存对象
+			//FrameBufferTexture2D(target,attachment,textarget,texture)有以下的参数:
+			//target：帧缓冲的目标（绘制、读取或者两者皆有）
+			//attachment：我们想要附加的附件类型。当前我们正在附加一个颜色附件。注意最后的0意味着我们可以附加多个颜色附件
+			//textarget：你希望附加的纹理类型
+			//texture：要附加的纹理本身
+			//level：多级渐远纹理的级别0
+
 			_gl.framebufferTexture2D( _gl.FRAMEBUFFER, attachment, textureTarget, properties.get( renderTarget.texture ).__webglTexture, 0 );//将纹理绑定到帧缓存对象
 			_gl.bindFramebuffer( _gl.FRAMEBUFFER, null );
 
@@ -19182,7 +19189,7 @@
 
 				state.bindTexture( _gl.TEXTURE_2D, textureProperties.__webglTexture );//绑定纹理
 				setTextureParameters( _gl.TEXTURE_2D, renderTarget.texture, isTargetPowerOfTwo );//设置纹理参数
-				setupFrameBufferTexture( renderTargetProperties.__webglFramebuffer, renderTarget, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D );//将纹理绑定到帧缓存
+				setupFrameBufferTexture( renderTargetProperties.__webglFramebuffer, renderTarget, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D );//将纹理绑定到帧缓存(管理颜色缓存)  _gl.COLOR_ATTACHMENT0:将纹理附加到帧缓冲区的颜色缓冲区
 
 				if ( textureNeedsGenerateMipmaps( renderTarget.texture, isTargetPowerOfTwo ) ) _gl.generateMipmap( _gl.TEXTURE_2D );//计算多级渐远纹理
 				state.bindTexture( _gl.TEXTURE_2D, null );
@@ -23635,7 +23642,7 @@
 
 					}
 
-					if ( _gl.checkFramebufferStatus( _gl.FRAMEBUFFER ) === _gl.FRAMEBUFFER_COMPLETE ) {
+					if ( _gl.checkFramebufferStatus( _gl.FRAMEBUFFER ) === _gl.FRAMEBUFFER_COMPLETE ) {//检查帧缓冲是否完整 配置成功checkFramebufferStatus:检查帧缓冲是否完整
 
 						// the following if statement ensures valid read requests (no out-of-bounds pixels, see #8604)
 
