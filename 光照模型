@@ -26,9 +26,9 @@ struct PointLight {//点光源
 
     float constant;//光线衰减常量
     float linear;//光线衰减一次项
-    float quadratic;光线衰减二次项
+    float quadratic;//光线衰减二次项
 
-    vec3 ambient;/环境光分量
+    vec3 ambient;//环境光分量
     vec3 diffuse;//漫反射光分量
     vec3 specular;//镜面反射光分量
 };  
@@ -44,7 +44,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     // 衰减
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
-                 light.quadratic * (distance * distance));    
+                 light.quadratic * (distance * distance));//计算衰减值    
     // 合并结果
     vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
     vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
@@ -58,21 +58,21 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 struct SpotLight {//聚光灯
     vec3 position;//位置
     vec3 direction;//方向
-    float cutOff;//
-    float outerCutOff;
+    float cutOff;//内圆锥余弦值
+    float outerCutOff;//外圆锥余弦值
   
-    float constant;
-    float linear;
-    float quadratic;
+    float constant;//光线衰减常量
+    float linear;//光线衰减一次项
+    float quadratic;//光线衰减二次项
   
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;       
+    vec3 ambient;//环境光分量
+    vec3 diffuse;//漫反射光分量
+    vec3 specular;//镜面反射光分量       
 };
 
-// calculates the color when using a spot light.
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
-{//聚光灯 光照模型
+{//聚光灯 光照模型 为了创建一种看起来边缘平滑的聚光，我们需要模拟聚光有一个内圆锥(Inner Cone)和一个外圆锥(Outer Cone)。
+//来让光从内圆锥逐渐减暗，直到外圆锥的边界。
     vec3 lightDir = normalize(light.position - fragPos);
     // 漫反射着色
     float diff = max(dot(normal, lightDir), 0.0);
@@ -81,7 +81,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     // 衰减
     float distance = length(light.position - fragPos);
-    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance)); //计算衰减值   
     // 聚光灯强度
     float theta = dot(lightDir, normalize(-light.direction)); 
     float epsilon = light.cutOff - light.outerCutOff;
