@@ -6907,12 +6907,12 @@
 			tempTexture = gl.createTexture();
 			occlusionTexture = gl.createTexture();
 
-			state.bindTexture( gl.TEXTURE_2D, tempTexture );
-			gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, 16, 16, 0, gl.RGB, gl.UNSIGNED_BYTE, null );
-			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
-			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
-			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+			state.bindTexture( gl.TEXTURE_2D, tempTexture );//绑定纹理对象
+			gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, 16, 16, 0, gl.RGB, gl.UNSIGNED_BYTE, null );//将纹理图像分配给纹理对象
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );//设置S轴方向纹理环绕方式为gl.CLAMP_TO_EDGE
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );//设置T轴方向纹理环绕方式为gl.CLAMP_TO_EDGE
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );//设置纹理放大时采用就近过滤方式
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );//设置纹理缩小时采用就近过滤方式
 
 			state.bindTexture( gl.TEXTURE_2D, occlusionTexture );
 			gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, 16, 16, 0, gl.RGBA, gl.UNSIGNED_BYTE, null );
@@ -19348,11 +19348,11 @@
 
 					if ( depthTest ) {
 
-						enable( gl.DEPTH_TEST );
+						enable( gl.DEPTH_TEST );//开启深度测试 
 
 					} else {
 
-						disable( gl.DEPTH_TEST );
+						disable( gl.DEPTH_TEST );//禁用深度测试 会导致后面绘制的片段将会总是会渲染在之前绘制片段的上面，即使之前绘制的片段本就应该渲染在最前面
 
 					}
 
@@ -19362,14 +19362,14 @@
 
 					if ( currentDepthMask !== depthMask && ! locked ) {
 
-						gl.depthMask( depthMask );
-						currentDepthMask = depthMask;
+						gl.depthMask( depthMask );//设置是否写入深度缓存。默认值：true，表示启用写入。只在深度测试被启用的时候才有效果。
+						currentDepthMask = depthMask;//更新currentDepthMask
 
 					}
 
 				},
 
-				setFunc: function ( depthFunc ) {
+				setFunc: function ( depthFunc ) {//将输入像素深度与当前深度缓冲区值进行比较的函数。
 
 					if ( currentDepthFunc !== depthFunc ) {
 
@@ -19379,57 +19379,57 @@
 
 								case NeverDepth:
 
-									gl.depthFunc( gl.NEVER );
+									gl.depthFunc( gl.NEVER );//永不通过
 									break;
 
 								case AlwaysDepth:
 
-									gl.depthFunc( gl.ALWAYS );
+									gl.depthFunc( gl.ALWAYS );//总是通过
 									break;
 
 								case LessDepth:
 
-									gl.depthFunc( gl.LESS );
+									gl.depthFunc( gl.LESS );//如果传入值小于深度缓冲值，则通过
 									break;
 
 								case LessEqualDepth:
 
-									gl.depthFunc( gl.LEQUAL );
+									gl.depthFunc( gl.LEQUAL );//如果传入值小于或等于深度缓冲区值，则通过
 									break;
 
 								case EqualDepth:
 
-									gl.depthFunc( gl.EQUAL );
+									gl.depthFunc( gl.EQUAL );//如果传入值等于深度缓冲区值，则通过
 									break;
 
 								case GreaterEqualDepth:
 
-									gl.depthFunc( gl.GEQUAL );
+									gl.depthFunc( gl.GEQUAL );//如果传入值大于或等于深度缓冲区值，则通过
 									break;
 
 								case GreaterDepth:
 
-									gl.depthFunc( gl.GREATER );
+									gl.depthFunc( gl.GREATER );//如果传入值大于深度缓冲区值，则通过
 									break;
 
 								case NotEqualDepth:
 
-									gl.depthFunc( gl.NOTEQUAL );
+									gl.depthFunc( gl.NOTEQUAL );//如果传入的值不等于深度缓冲区值，则通过
 									break;
 
 								default:
 
-									gl.depthFunc( gl.LEQUAL );
+									gl.depthFunc( gl.LEQUAL );//如果传入值小于或等于深度缓冲区值，则通过
 
 							}
 
 						} else {
 
-							gl.depthFunc( gl.LEQUAL );
+							gl.depthFunc( gl.LEQUAL );//如果传入值小于或等于深度缓冲区值，则通过
 
 						}
 
-						currentDepthFunc = depthFunc;
+						currentDepthFunc = depthFunc;//更新currentDepthFunc
 
 					}
 
@@ -19485,11 +19485,11 @@
 
 					if ( stencilTest ) {
 
-						enable( gl.STENCIL_TEST );
+						enable( gl.STENCIL_TEST );//开启模板测试
 
 					} else {
 
-						disable( gl.STENCIL_TEST );
+						disable( gl.STENCIL_TEST );//禁用模板测试
 
 					}
 
@@ -19506,14 +19506,17 @@
 
 				},
 
-				setFunc: function ( stencilFunc, stencilRef, stencilMask ) {
-
+				setFunc: function ( stencilFunc, stencilRef, stencilMask ) {//设置stencil的测试方式，即怎样才算通过测试
+                    //判断是否需要重新设置
 					if ( currentStencilFunc !== stencilFunc ||
 					     currentStencilRef 	!== stencilRef 	||
 					     currentStencilFuncMask !== stencilMask ) {
 
 						gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
-
+						//stencilFunc：指定测试函数，允许的值为NEVER、LESS、LEQUAL、GREATER、GEQUAL、EQUAL、NOTEQUAL、ALWAYS。这些名字含义很明确，不再详述。
+                        //stencilRef：用来做stencil测试的参考值。
+                        //stencilMask：指定操作掩码，在测试的时候会先将stencilRef与stencilMask进行与运算，再将stencilRef与buffer中的值进行与运算，最后将两个结果进行比较，比较的方法由func参数所指定。
+                        //更新
 						currentStencilFunc = stencilFunc;
 						currentStencilRef = stencilRef;
 						currentStencilFuncMask = stencilMask;
@@ -19522,7 +19525,7 @@
 
 				},
 
-				setOp: function ( stencilFail, stencilZFail, stencilZPass ) {
+				setOp: function ( stencilFail, stencilZFail, stencilZPass ) {//指定通过stencil测试和未通过测试时要怎么处理
 
 					if ( currentStencilFail	 !== stencilFail 	||
 					     currentStencilZFail !== stencilZFail ||
@@ -19625,8 +19628,8 @@
 			var texture = gl.createTexture();
 
 			gl.bindTexture( type, texture );
-			gl.texParameteri( type, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
-			gl.texParameteri( type, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
+			gl.texParameteri( type, gl.TEXTURE_MIN_FILTER, gl.NEAREST );//设置纹理缩小时采用就近过滤方式
+			gl.texParameteri( type, gl.TEXTURE_MAG_FILTER, gl.NEAREST );//设置纹理放大时采用就近过滤方式
 
 			for ( var i = 0; i < count; i ++ ) {
 

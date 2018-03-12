@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Stencil Buffer</title>
+<script id="shader-vs" type="x-shader/x-vertex">
+attribute vec3 aPos;
+attribute vec4 aColor;
+varying vec4 vColor;
+void main(void){
+    gl_Position = vec4(aPos, 1);
+    vColor = aColor;
+}
+</script>
+<script id="shader-fs" type="x-shader/x-fragment">
+precision highp float;
+varying vec4 vColor;
+void main(void) {
+    gl_FragColor = vColor;
+}
+</script>
+</head>
+<body>
+<canvas id="canvas" width="400" height="400" ></canvas>
+<script>
+var gl;
+var canvas = document.getElementById('canvas');
+var glProgram = null;
+
+function getGLContext() {
+    var glContextNames = ['webgl', 'experimental-webgl'];
+    for (var i = 0; i < glContextNames.length; i ++) {
+        try {
+            gl = canvas.getContext(glContextNames[i], {
+                stencil: true
+            });
+        } catch (e) {}
+        if (gl) {
+            gl.clearColor(74 / 255, 115 / 255, 94 / 255, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            gl.enable(gl.STENCIL_TEST);
+            break;
+        }
+    }
+}
+
+function initShaders() {
+    //get shader source
+    var vs_source = document.getElementById('shader-vs').innerHTML,
+        fs_source = document.getElementById('shader-fs').innerHTML;
+        
+    //compile shaders   
+    vertexShader = makeShader(vs_source, gl.VERTEX_SHADER);
+    fragmentShader = makeShader(fs_source, gl.FRAGMENT_SHADER);
+    
+    //create program
+    glProgram = gl.createProgram();
+    
+    //attach and link shaders to the program
+    gl.attachShader(glProgram, vertexShader);
+    gl.attachShader(glProgram, fragmentShader);
+    gl.linkProgram(glProgram);
+
+    if (!gl.getProgramParameter(glProgram, gl.LINK_STATUS)) {
+        alert("Unable to initialize the shader program.");
+    }
+    
+    //use program
+    gl.useProgram(glProgram);
+}
+
+function makeShader(src, type) {
+    //compile the vertex shader
+    var shader = gl.createShader(type);
+    gl.shaderSource(shader, src);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        alert("Error compiling shader: " + gl.getShaderInfoLog(shader));
+    }
+    return shader;
+}
+// vertex representing the triangle
+var vertex = [
+    -.5, -.2,  0,
+    .5,  -.2,  0,
+    0,   .6,   0
+];
+var vertex1 = [
+    -.25, -.2,  0,
+    .5,  -.2,  0,
+    0.1,   .6,   0
+];
+var stencilVertex = [
+    -.2, -.5,  0,
+    .4,  -.5,  0,
+    .3,   .6,   0
+];
+function setupBufferAndDraw(){
+    // draw the first triangle as stencil
+    var color = [
+         1, 1, 1, 1,
+         1, 1, 1, 1,
+         1, 1, 1, 1
+    ];
+    var colorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
+
+    var aColorPosition = gl.getAttribLocation(glProgram, 'aColor');
+    gl.vertexAttribPointer(aColorPosition, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(aColorPosition);
+    
+    // Always pass test
+    gl.stencilFunc(gl.ALWAYS, 1, 0xff);
+    //stencilFunc(GLenum func, GLint ref, GLuint mask); func：指定测试函数，允许的值为NEVER、LESS、LEQUAL、GREATER、GEQUAL、EQUAL、NOTEQUAL、ALWAYS。这些名字含义很明确，不再详述。
+    //ref：用来做stencil测试的参考值。
+    //mask：指定操作掩码，在测试的时候会先将ref与mask进行与运算，再将ref与buffer中的值进行与运算，最后将两个结果进行比较，比较的方法由func参数所指定。
+    gl.stencilOp(gl.KEEP, gl.KEEP, gl.REPLACE);
+    //stencilOp(GLenum fail, GLenum zfail, GLenum zpass);
+    //fail：指定当stencil测试未通过时的行为，允许的值为KEEP、ZERO、REPLACE、INCR、INCR_WRAP、DECR、DECR_WRAP、INVERT。
+    //zfail：指定当stencil测试通过但是depth测试未通过时的行为。允许的值同fail。
+    //zpass：指定当stencil测试通过且depth测试也通过时的行为，或者当stencil测试通过且当前没有depth buffer或者depth测试被关闭时的行为。允许的值同fail。
+    gl.stencilMask(0xff);//控制写入stencil buffer的有效位
+    gl.clear(gl.STENCIL_BUFFER_BIT);
+    // No need to display the triangle
+    // gl.colorMask(0, 0, 0, 0);
+
+    var vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(stencilVertex), gl.STATIC_DRAW);
+
+    var aVertexPosition = gl.getAttribLocation(glProgram, 'aPos');
+    gl.vertexAttribPointer(aVertexPosition, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(aVertexPosition);
+
+    gl.drawArrays(gl.TRIANGLES, 0, stencilVertex.length / 3);
+
+    // Pass test if stencil value is 1
+    gl.stencilFunc(gl.NOTEQUAL, 1, 0xFF);
+    gl.stencilMask(0xff);//禁止模板值写入
+    gl.colorMask(1, 1, 1, 1);
+    // draw the clipped triangle
+    color = [
+        1, 0, 0, 1,
+        0, 1, 0, 1,
+        0, 0, 1, 1
+    ];
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex), gl.STATIC_DRAW);
+    gl.drawArrays(gl.TRIANGLES, 0, vertex.length / 3);
+
+    gl.stencilFunc(gl.EQUAL, 1, 0xFF);
+    gl.stencilMask(0x00);
+    gl.colorMask(1, 1, 1, 1);
+    // draw the clipped triangle
+    color = [
+        1, 0, 0, 1,
+        1, 0, 0, 1,
+        1, 0, 0, 1
+    ];
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(color), gl.STATIC_DRAW);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertex1), gl.STATIC_DRAW);
+    gl.drawArrays(gl.TRIANGLES, 0, vertex1.length / 3);
+}
+
+window.onload = function(){
+    getGLContext();
+    initShaders();
+    setupBufferAndDraw();
+}
+</script>
+</body>
+</html>
