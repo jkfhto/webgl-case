@@ -2804,9 +2804,9 @@
 
 			var matrix = new Matrix4();
 
-			return function project( camera ) {
+			return function project( camera ) {//将世界坐标转为规范化设备坐标
 
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
+				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );//投影矩阵x视图矩阵
 				return this.applyMatrix4( matrix );
 
 			};
@@ -2817,9 +2817,9 @@
 
 			var matrix = new Matrix4();
 
-			return function unproject( camera ) {
+			return function unproject( camera ) {//将规范化设备坐标转为世界坐标
 
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
+				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );//视图矩阵的逆矩阵x投影矩阵的逆矩阵
 				return this.applyMatrix4( matrix );
 
 			};
@@ -5601,7 +5601,7 @@
 
 		},
 
-		copyGammaToLinear: function ( color, gammaFactor ) {
+		copyGammaToLinear: function ( color, gammaFactor ) {//伽马反校 将线性转到非线性（图片是在非线性空间创建的 转为线性空间进行计算）
 
 			if ( gammaFactor === undefined ) gammaFactor = 2.0;
 
@@ -5613,7 +5613,7 @@
 
 		},
 
-		copyLinearToGamma: function ( color, gammaFactor ) {
+		copyLinearToGamma: function ( color, gammaFactor ) {//伽马校正 将线性转到非线性
 
 			if ( gammaFactor === undefined ) gammaFactor = 2.0;
 
@@ -14958,7 +14958,7 @@
 
 		this.extensions = {
 			derivatives: false, // set to use derivatives
-			fragDepth: false, // set to use fragment depth values
+			fragDepth: false, // set to use fragment depth values 设置片段的深度值gl.FragDepth
 			drawBuffers: false, // set to use draw buffers
 			shaderTextureLOD: false // set to use shader texture LOD
 		};
@@ -15127,19 +15127,19 @@
 
 			return function distanceSqToPoint( point ) {
 
-				var directionDistance = v1.subVectors( point, this.origin ).dot( this.direction );
+				var directionDistance = v1.subVectors( point, this.origin ).dot( this.direction );//计算从射线指向球的球心的向量 在射线的方向向量上的投影长度 this.direction:单位向量
 
 				// point behind the ray
 
-				if ( directionDistance < 0 ) {
+				if ( directionDistance < 0 ) {//从射线指向球的球心的向量与射线的方向向量所成的夹角大于90度
 
-					return this.origin.distanceToSquared( point );
+					return this.origin.distanceToSquared( point );//计算球心与射线起点的距离
 
 				}
 
-				v1.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+				v1.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );//计算射线上与球心距离最小的点的坐标
 
-				return v1.distanceToSquared( point );
+				return v1.distanceToSquared( point );//计算射线上与球心距离最小的点与球心的距离
 
 			};
 
@@ -15308,7 +15308,7 @@
 
 		}(),
 
-		intersectsSphere: function ( sphere ) {
+		intersectsSphere: function ( sphere ) {//检测射线与球是否相交
 
 			return this.distanceToPoint( sphere.center ) <= sphere.radius;
 
@@ -15381,7 +15381,7 @@
 
 		},
 
-		intersectBox: function ( box, optionalTarget ) {
+		intersectBox: function ( box, optionalTarget ) {//计算
 
 			var tmin, tmax, tymin, tymax, tzmin, tzmax;
 
@@ -15476,7 +15476,7 @@
 
 				edge1.subVectors( b, a );
 				edge2.subVectors( c, a );
-				normal.crossVectors( edge1, edge2 );
+				normal.crossVectors( edge1, edge2 );//计算三角形的法向量
 
 				// Solve Q + t*D = b1*E1 + b2*E2 (Q = kDiff, D = ray direction,
 				// E1 = kEdge1, E2 = kEdge2, N = Cross(E1,E2)) by
@@ -15486,9 +15486,9 @@
 				var DdN = this.direction.dot( normal );
 				var sign;
 
-				if ( DdN > 0 ) {
+				if ( DdN > 0 ) {//射线方向向量与三角形的法线向量夹角小于90度
 
-					if ( backfaceCulling ) return null;
+					if ( backfaceCulling ) return null;//没有开启双面检测直接返回
 					sign = 1;
 
 				} else if ( DdN < 0 ) {
@@ -15496,7 +15496,7 @@
 					sign = - 1;
 					DdN = - DdN;
 
-				} else {
+				} else {//射线方向向量与三角形的法线垂直
 
 					return null;
 
@@ -15706,7 +15706,7 @@
 
 			var v0 = new Vector3();
 
-			return function normal( a, b, c, optionalTarget ) {
+			return function normal( a, b, c, optionalTarget ) {//计算三角形的法向量
 
 				var result = optionalTarget || new Vector3();
 
@@ -15715,7 +15715,7 @@
 				result.cross( v0 );
 
 				var resultLengthSq = result.lengthSq();
-				if ( resultLengthSq > 0 ) {
+				if ( resultLengthSq > 0 ) {//计算单位法向量
 
 					return result.multiplyScalar( 1 / Math.sqrt( resultLengthSq ) );
 
@@ -16098,18 +16098,18 @@
 
 				} else {
 
-					intersect = ray.intersectTriangle( pA, pB, pC, material.side !== DoubleSide, point );
+					intersect = ray.intersectTriangle( pA, pB, pC, material.side !== DoubleSide, point );//射线和三角形的相交检测
 
 				}
 
 				if ( intersect === null ) return null;
 
 				intersectionPointWorld.copy( point );
-				intersectionPointWorld.applyMatrix4( object.matrixWorld );
+				intersectionPointWorld.applyMatrix4( object.matrixWorld );//获取交点的世界坐标
 
-				var distance = raycaster.ray.origin.distanceTo( intersectionPointWorld );
+				var distance = raycaster.ray.origin.distanceTo( intersectionPointWorld );//计算交点与射线原点的距离
 
-				if ( distance < raycaster.near || distance > raycaster.far ) return null;
+				if ( distance < raycaster.near || distance > raycaster.far ) return null;//判断交点是否在射线有效范围内
 
 				return {
 					distance: distance,
@@ -16120,7 +16120,7 @@
 			}
 
 			function checkBufferGeometryIntersection( object, raycaster, ray, position, uv, a, b, c ) {
-
+                //获取三角形的顶点坐标
 				vA.fromBufferAttribute( position, a );
 				vB.fromBufferAttribute( position, b );
 				vC.fromBufferAttribute( position, c );
@@ -16130,12 +16130,12 @@
 				if ( intersection ) {
 
 					if ( uv ) {
-
+                        //获取顶点uv坐标
 						uvA.fromBufferAttribute( uv, a );
 						uvB.fromBufferAttribute( uv, b );
 						uvC.fromBufferAttribute( uv, c );
 
-						intersection.uv = uvIntersection( intersectionPoint, vA, vB, vC, uvA, uvB, uvC );
+						intersection.uv = uvIntersection( intersectionPoint, vA, vB, vC, uvA, uvB, uvC );//计算交点的uv坐标
 
 					}
 
@@ -16156,14 +16156,14 @@
 
 				if ( material === undefined ) return;
 
-				// Checking boundingSphere distance to ray
+				// Checking boundingSphere distance to ray  检测射线与包围球的距离
 
-				if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();
+				if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();//计算包围球
 
 				sphere.copy( geometry.boundingSphere );
-				sphere.applyMatrix4( matrixWorld );
+				sphere.applyMatrix4( matrixWorld );//转换到世界坐标表示
 
-				if ( raycaster.ray.intersectsSphere( sphere ) === false ) return;
+				if ( raycaster.ray.intersectsSphere( sphere ) === false ) return;//射线与包围球没有交点 返回
 
 				//
 
@@ -16174,7 +16174,7 @@
 
 				if ( geometry.boundingBox !== null ) {
 
-					if ( ray.intersectsBox( geometry.boundingBox ) === false ) return;
+					if ( ray.intersectsBox( geometry.boundingBox ) === false ) return;//射线与包围盒没有交点 返回
 
 				}
 
@@ -16183,8 +16183,8 @@
 				if ( geometry.isBufferGeometry ) {
 
 					var a, b, c;
-					var index = geometry.index;
-					var position = geometry.attributes.position;
+					var index = geometry.index;//顶点索引
+					var position = geometry.attributes.position;//顶点位置坐标
 					var uv = geometry.attributes.uv;
 					var i, l;
 
@@ -16193,7 +16193,7 @@
 						// indexed buffer geometry
 
 						for ( i = 0, l = index.count; i < l; i += 3 ) {
-
+                            //获取三角形的顶点索引值
 							a = index.getX( i );
 							b = index.getX( i + 1 );
 							c = index.getX( i + 2 );
@@ -21525,13 +21525,13 @@
 			_width = width;
 			_height = height;
 
-			_canvas.width = width * _pixelRatio;
-			_canvas.height = height * _pixelRatio;
+			_canvas.width = width * _pixelRatio;//像素宽 _pixelRatio影响画面的清晰度和锯齿
+			_canvas.height = height * _pixelRatio;//像素高
 
 			if ( updateStyle !== false ) {
 
-				_canvas.style.width = width + 'px';
-				_canvas.style.height = height + 'px';
+				_canvas.style.width = width + 'px';//物理宽
+				_canvas.style.height = height + 'px';//物理高
 
 			}
 
@@ -21553,7 +21553,7 @@
 			_width = width;
 			_height = height;
 
-			_pixelRatio = pixelRatio;
+			_pixelRatio = pixelRatio;//pixelRatio:当前显示设备的物理像素分辨率与CSS像素分辨率的比值。该值也可以被解释为像素大小的比例：即一个CSS像素的大小相对于一个物理像素的大小的比值。
 
 			_canvas.width = width * pixelRatio;
 			_canvas.height = height * pixelRatio;
@@ -40634,7 +40634,7 @@
 
 	}
 
-	function ascSort( a, b ) {
+	function ascSort( a, b ) {//根据distance值进行升序排序
 
 		return a.distance - b.distance;
 
@@ -40642,11 +40642,11 @@
 
 	function intersectObject( object, raycaster, intersects, recursive ) {
 
-		if ( object.visible === false ) return;
+		if ( object.visible === false ) return;//物体隐藏直接返回
 
-		object.raycast( raycaster, intersects );
+		object.raycast( raycaster, intersects );//执行不同对象的raycast射线检测方法
 
-		if ( recursive === true ) {
+		if ( recursive === true ) {//递归遍历检测子对象
 
 			var children = object.children;
 
@@ -40676,8 +40676,9 @@
 
 			if ( ( camera && camera.isPerspectiveCamera ) ) {
 
-				this.ray.origin.setFromMatrixPosition( camera.matrixWorld );
-				this.ray.direction.set( coords.x, coords.y, 0.5 ).unproject( camera ).sub( this.ray.origin ).normalize();
+				this.ray.origin.setFromMatrixPosition( camera.matrixWorld );//将相机的世界坐标赋值给射线的原点
+				this.ray.direction.set( coords.x, coords.y, 0.5 ).unproject( camera ).sub( this.ray.origin ).normalize();//将相机的位置坐标减去点击处的世界坐标向量 作为射线的方向向量
+				//this.ray.direction.set( coords.x, coords.y, 0.5 ).unproject( camera ):获取点击处的世界坐标
 
 			} else if ( ( camera && camera.isOrthographicCamera ) ) {
 
