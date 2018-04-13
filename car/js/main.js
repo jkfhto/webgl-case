@@ -97,7 +97,7 @@ var Car = function(){
 	    });
 	    var TextureLoader = new THREE.TextureLoader();
 	    var BinaryLoader = new THREE.BinaryLoader();
-	    BinaryLoader.load("css/cube/road/environment.js", function(_model) {
+	    BinaryLoader.load("css/cube/Road/environment.js", function(_model) {
 	        meshBkg = new THREE.Mesh(_model,Material_Bkg);
 	        scene.add(meshBkg);
 	        meshBkg.visible = false
