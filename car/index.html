@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Car</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				background:#000;
+				color:#fff;
+				padding:0;
+				margin:0;
+				overflow:hidden;
+				font-family:georgia;
+				text-align:center;
+			}
+			h1 { }
+			a { color:skyblue; text-decoration:none }
+			/*canvas { pointer-events:none; z-index:10; position:relative; }*/
+
+			#d { position:absolute; width: 100%; text-align:center; margin:1em 0 -4.5em 0; z-index:10; }
+
+			.bwrap { margin:0.5em 0 0 0 }
+			button { font-family:georgia; border:0; background:#000; color:#fff; padding:0.2em 0.5em; cursor:pointer; border-radius:3px; }
+			.dg.ac{z-index: 100;}
+			/*button:hover { background:#333 }*/
+			#buttons_cars button { color:#FFEB3B ;margin-right: 15px;font-size: 20px;}
+			#buttons_materials button{color: #3bff89;margin-right: 15px;font-size: 16px;}
+
+			#car_info { text-align:center; }
+			#car_name { font-size:1em }
+			#car_author { font-size:1em }
+			.select{background-color: #39514f}
+
+			#oldie { background:rgb(50,0,0) !important; color:#fff !important; margin-top:7em!important }
+		</style>
+	</head>
+	<body>
+		<div id="d">
+			<div id="buttons_cars" class="bwrap">
+				<button id="Lancer" num="0" class="select buttons_car">三菱</button>
+				<button id="Audi" num="1" class="buttons_car">奥迪</button>
+				<button id="Mercedes" num="2" class="buttons_car">奔驰</button>
+			</div>
+
+			<div id="buttons_materials" class="bwrap">
+				<button id="Garage" num="0" class="select buttons_material">车库</button>
+				<button id="Meadow" num="1" class="buttons_material">草地</button>
+				<button id="Road" num="2" class="buttons_material">马路</button>
+				<button id="Snowfield" num="3" class="buttons_material">雪地</button>
+				<button id="Castle" num="4" class="buttons_material">城堡</button>
+			</div>
+		</div>
+		<script src="js/three.js"></script>
+		<script src="js/BinaryLoader.js"></script>
+        <script src="js/OrbitControls.js"></script>
+        <script type="text/javascript" src="js/dat.gui.min.js"></script>
+        <script src="js/stats.min.js"></script>
+        <script type="text/javascript" src="../jquery.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+	</body>
+</html>
