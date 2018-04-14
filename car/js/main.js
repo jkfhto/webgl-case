@@ -452,7 +452,7 @@ var Car = function(){
 		pointLight.position.copy(camera.position);
 		scope.wheelRun();
 		stats.update();
-		// controls.update();
+		controls.update();
 		renderer.render( scene, camera );
 		requestAnimationFrame( scope.animate );
 	};
