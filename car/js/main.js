@@ -268,14 +268,6 @@ var Car = function(){
 				Material_rim_arr[Car_index].color.setHex( val );
 		} );
 
-		// Material_rim = new THREE.MeshPhongMaterial({//轮缘
-		//         color: 0xb8b8b8,
-		//         reflectivity: 0.5,
-		//         combine: THREE.MixOperation,
-		//         envMap: textureCube_env,
-		//         specular: 0x202020
-		//     });
-
 		gui.add( API, '轮胎运动' ).onChange( function(val) {
 				iswheelRotate = val;
 		} );
