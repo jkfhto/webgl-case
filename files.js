@@ -5,6 +5,7 @@ var files = {
 		"星空_galaxy/index",
 		"管道_pipeline/index",
 		"汽车展示_car/index",
+		"Shadertoy_Shadertoy/index",
 	]
 	
 };
