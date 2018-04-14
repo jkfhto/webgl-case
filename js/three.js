@@ -2804,9 +2804,9 @@
 
 			var matrix = new Matrix4();
 
-			return function project( camera ) {
+			return function project( camera ) {//将世界坐标转为规范化设备坐标
 
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
+				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );//投影矩阵x视图矩阵
 				return this.applyMatrix4( matrix );
 
 			};
@@ -2817,9 +2817,9 @@
 
 			var matrix = new Matrix4();
 
-			return function unproject( camera ) {
+			return function unproject( camera ) {//将规范化设备坐标转为世界坐标
 
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
+				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );//视图矩阵的逆矩阵x投影矩阵的逆矩阵
 				return this.applyMatrix4( matrix );
 
 			};
@@ -5601,7 +5601,7 @@
 
 		},
 
-		copyGammaToLinear: function ( color, gammaFactor ) {
+		copyGammaToLinear: function ( color, gammaFactor ) {//伽马反校 将线性转到非线性（图片是在非线性空间创建的 转为线性空间进行计算）
 
 			if ( gammaFactor === undefined ) gammaFactor = 2.0;
 
@@ -5613,7 +5613,7 @@
 
 		},
 
-		copyLinearToGamma: function ( color, gammaFactor ) {
+		copyLinearToGamma: function ( color, gammaFactor ) {//伽马校正 将线性转到非线性
 
 			if ( gammaFactor === undefined ) gammaFactor = 2.0;
 
@@ -6907,12 +6907,12 @@
 			tempTexture = gl.createTexture();
 			occlusionTexture = gl.createTexture();
 
-			state.bindTexture( gl.TEXTURE_2D, tempTexture );
-			gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, 16, 16, 0, gl.RGB, gl.UNSIGNED_BYTE, null );
-			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
-			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
-			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
-			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
+			state.bindTexture( gl.TEXTURE_2D, tempTexture );//绑定纹理对象
+			gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, 16, 16, 0, gl.RGB, gl.UNSIGNED_BYTE, null );//将纹理图像分配给纹理对象
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );//设置S轴方向纹理环绕方式为gl.CLAMP_TO_EDGE
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );//设置T轴方向纹理环绕方式为gl.CLAMP_TO_EDGE
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST );//设置纹理放大时采用就近过滤方式
+			gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST );//设置纹理缩小时采用就近过滤方式
 
 			state.bindTexture( gl.TEXTURE_2D, occlusionTexture );
 			gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGBA, 16, 16, 0, gl.RGBA, gl.UNSIGNED_BYTE, null );
@@ -14958,7 +14958,7 @@
 
 		this.extensions = {
 			derivatives: false, // set to use derivatives
-			fragDepth: false, // set to use fragment depth values
+			fragDepth: false, // set to use fragment depth values 设置片段的深度值gl.FragDepth
 			drawBuffers: false, // set to use draw buffers
 			shaderTextureLOD: false // set to use shader texture LOD
 		};
@@ -15127,19 +15127,19 @@
 
 			return function distanceSqToPoint( point ) {
 
-				var directionDistance = v1.subVectors( point, this.origin ).dot( this.direction );
+				var directionDistance = v1.subVectors( point, this.origin ).dot( this.direction );//计算从射线指向球的球心的向量 在射线的方向向量上的投影长度 this.direction:单位向量
 
 				// point behind the ray
 
-				if ( directionDistance < 0 ) {
+				if ( directionDistance < 0 ) {//从射线指向球的球心的向量与射线的方向向量所成的夹角大于90度
 
-					return this.origin.distanceToSquared( point );
+					return this.origin.distanceToSquared( point );//计算球心与射线起点的距离
 
 				}
 
-				v1.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+				v1.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );//计算射线上与球心距离最小的点的坐标
 
-				return v1.distanceToSquared( point );
+				return v1.distanceToSquared( point );//计算射线上与球心距离最小的点与球心的距离
 
 			};
 
@@ -15308,7 +15308,7 @@
 
 		}(),
 
-		intersectsSphere: function ( sphere ) {
+		intersectsSphere: function ( sphere ) {//检测射线与球是否相交
 
 			return this.distanceToPoint( sphere.center ) <= sphere.radius;
 
@@ -15381,7 +15381,7 @@
 
 		},
 
-		intersectBox: function ( box, optionalTarget ) {
+		intersectBox: function ( box, optionalTarget ) {//计算
 
 			var tmin, tmax, tymin, tymax, tzmin, tzmax;
 
@@ -15476,7 +15476,7 @@
 
 				edge1.subVectors( b, a );
 				edge2.subVectors( c, a );
-				normal.crossVectors( edge1, edge2 );
+				normal.crossVectors( edge1, edge2 );//计算三角形的法向量
 
 				// Solve Q + t*D = b1*E1 + b2*E2 (Q = kDiff, D = ray direction,
 				// E1 = kEdge1, E2 = kEdge2, N = Cross(E1,E2)) by
@@ -15486,9 +15486,9 @@
 				var DdN = this.direction.dot( normal );
 				var sign;
 
-				if ( DdN > 0 ) {
+				if ( DdN > 0 ) {//射线方向向量与三角形的法线向量夹角小于90度
 
-					if ( backfaceCulling ) return null;
+					if ( backfaceCulling ) return null;//没有开启双面检测直接返回
 					sign = 1;
 
 				} else if ( DdN < 0 ) {
@@ -15496,7 +15496,7 @@
 					sign = - 1;
 					DdN = - DdN;
 
-				} else {
+				} else {//射线方向向量与三角形的法线垂直
 
 					return null;
 
@@ -15706,7 +15706,7 @@
 
 			var v0 = new Vector3();
 
-			return function normal( a, b, c, optionalTarget ) {
+			return function normal( a, b, c, optionalTarget ) {//计算三角形的法向量
 
 				var result = optionalTarget || new Vector3();
 
@@ -15715,7 +15715,7 @@
 				result.cross( v0 );
 
 				var resultLengthSq = result.lengthSq();
-				if ( resultLengthSq > 0 ) {
+				if ( resultLengthSq > 0 ) {//计算单位法向量
 
 					return result.multiplyScalar( 1 / Math.sqrt( resultLengthSq ) );
 
@@ -16098,18 +16098,18 @@
 
 				} else {
 
-					intersect = ray.intersectTriangle( pA, pB, pC, material.side !== DoubleSide, point );
+					intersect = ray.intersectTriangle( pA, pB, pC, material.side !== DoubleSide, point );//射线和三角形的相交检测
 
 				}
 
 				if ( intersect === null ) return null;
 
 				intersectionPointWorld.copy( point );
-				intersectionPointWorld.applyMatrix4( object.matrixWorld );
+				intersectionPointWorld.applyMatrix4( object.matrixWorld );//获取交点的世界坐标
 
-				var distance = raycaster.ray.origin.distanceTo( intersectionPointWorld );
+				var distance = raycaster.ray.origin.distanceTo( intersectionPointWorld );//计算交点与射线原点的距离
 
-				if ( distance < raycaster.near || distance > raycaster.far ) return null;
+				if ( distance < raycaster.near || distance > raycaster.far ) return null;//判断交点是否在射线有效范围内
 
 				return {
 					distance: distance,
@@ -16120,7 +16120,7 @@
 			}
 
 			function checkBufferGeometryIntersection( object, raycaster, ray, position, uv, a, b, c ) {
-
+                //获取三角形的顶点坐标
 				vA.fromBufferAttribute( position, a );
 				vB.fromBufferAttribute( position, b );
 				vC.fromBufferAttribute( position, c );
@@ -16130,12 +16130,12 @@
 				if ( intersection ) {
 
 					if ( uv ) {
-
+                        //获取顶点uv坐标
 						uvA.fromBufferAttribute( uv, a );
 						uvB.fromBufferAttribute( uv, b );
 						uvC.fromBufferAttribute( uv, c );
 
-						intersection.uv = uvIntersection( intersectionPoint, vA, vB, vC, uvA, uvB, uvC );
+						intersection.uv = uvIntersection( intersectionPoint, vA, vB, vC, uvA, uvB, uvC );//计算交点的uv坐标
 
 					}
 
@@ -16156,14 +16156,14 @@
 
 				if ( material === undefined ) return;
 
-				// Checking boundingSphere distance to ray
+				// Checking boundingSphere distance to ray  检测射线与包围球的距离
 
-				if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();
+				if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();//计算包围球
 
 				sphere.copy( geometry.boundingSphere );
-				sphere.applyMatrix4( matrixWorld );
+				sphere.applyMatrix4( matrixWorld );//转换到世界坐标表示
 
-				if ( raycaster.ray.intersectsSphere( sphere ) === false ) return;
+				if ( raycaster.ray.intersectsSphere( sphere ) === false ) return;//射线与包围球没有交点 返回
 
 				//
 
@@ -16174,7 +16174,7 @@
 
 				if ( geometry.boundingBox !== null ) {
 
-					if ( ray.intersectsBox( geometry.boundingBox ) === false ) return;
+					if ( ray.intersectsBox( geometry.boundingBox ) === false ) return;//射线与包围盒没有交点 返回
 
 				}
 
@@ -16183,8 +16183,8 @@
 				if ( geometry.isBufferGeometry ) {
 
 					var a, b, c;
-					var index = geometry.index;
-					var position = geometry.attributes.position;
+					var index = geometry.index;//顶点索引
+					var position = geometry.attributes.position;//顶点位置坐标
 					var uv = geometry.attributes.uv;
 					var i, l;
 
@@ -16193,7 +16193,7 @@
 						// indexed buffer geometry
 
 						for ( i = 0, l = index.count; i < l; i += 3 ) {
-
+                            //获取三角形的顶点索引值
 							a = index.getX( i );
 							b = index.getX( i + 1 );
 							c = index.getX( i + 2 );
@@ -17674,7 +17674,7 @@
 		var envMapModeDefine = 'ENVMAP_MODE_REFLECTION';
 		var envMapBlendingDefine = 'ENVMAP_BLENDING_MULTIPLY';
 
-		if ( parameters.envMap ) {
+		if ( parameters.envMap ) {//环境贴图设置相关属性
 
 			switch ( material.envMap.mapping ) {
 
@@ -17708,7 +17708,7 @@
 
 			}
 
-			switch ( material.combine ) {
+			switch ( material.combine ) {//设置环境贴图颜色混合方式
 
 				case MultiplyOperation:
 					envMapBlendingDefine = 'ENVMAP_BLENDING_MULTIPLY';
@@ -19012,6 +19012,13 @@
 			var glType = utils.convert( renderTarget.texture.type );//获取数据类型
 			state.texImage2D( textureTarget, 0, glFormat, renderTarget.width, renderTarget.height, 0, glFormat, glType, null );//设置纹理参数
 			_gl.bindFramebuffer( _gl.FRAMEBUFFER, framebuffer );//绑定帧缓存对象
+			//FrameBufferTexture2D(target,attachment,textarget,texture)有以下的参数:
+			//target：帧缓冲的目标（绘制、读取或者两者皆有）
+			//attachment：我们想要附加的附件类型。当前我们正在附加一个颜色附件。注意最后的0意味着我们可以附加多个颜色附件
+			//textarget：你希望附加的纹理类型
+			//texture：要附加的纹理本身
+			//level：多级渐远纹理的级别0
+
 			_gl.framebufferTexture2D( _gl.FRAMEBUFFER, attachment, textureTarget, properties.get( renderTarget.texture ).__webglTexture, 0 );//将纹理绑定到帧缓存对象
 			_gl.bindFramebuffer( _gl.FRAMEBUFFER, null );
 
@@ -19182,7 +19189,7 @@
 
 				state.bindTexture( _gl.TEXTURE_2D, textureProperties.__webglTexture );//绑定纹理
 				setTextureParameters( _gl.TEXTURE_2D, renderTarget.texture, isTargetPowerOfTwo );//设置纹理参数
-				setupFrameBufferTexture( renderTargetProperties.__webglFramebuffer, renderTarget, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D );//将纹理绑定到帧缓存
+				setupFrameBufferTexture( renderTargetProperties.__webglFramebuffer, renderTarget, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D );//将纹理绑定到帧缓存(管理颜色缓存)  _gl.COLOR_ATTACHMENT0:将纹理附加到帧缓冲区的颜色缓冲区
 
 				if ( textureNeedsGenerateMipmaps( renderTarget.texture, isTargetPowerOfTwo ) ) _gl.generateMipmap( _gl.TEXTURE_2D );//计算多级渐远纹理
 				state.bindTexture( _gl.TEXTURE_2D, null );
@@ -19229,16 +19236,16 @@
 	 * @author fordacious / fordacious.github.io
 	 */
 
-	function WebGLProperties() {
+	function WebGLProperties() {//管理，并关联场景中的物体材质，着色器，program等属性 该类型存储各种东西：Texture、Material、RenderTarget、Object的buffers等。
 
-		var properties = {};
+		var properties = {};//用于保存相关属性 
 
-		function get( object ) {
+		function get( object ) {//会根据对象的uuid来获取相关WebGL属性，比如gl.createTexture、gl.createBuffer创建的各种缓冲区。
 
 			var uuid = object.uuid;
 			var map = properties[ uuid ];
 
-			if ( map === undefined ) {
+			if ( map === undefined ) {//没有获得指定对象 则将其赋值给properties对应的属性 保存在内存中
 
 				map = {};
 				properties[ uuid ] = map;
@@ -19249,7 +19256,7 @@
 
 		}
 
-		function remove( object ) {
+		function remove( object ) {//删除对象指定的属性
 
 			delete properties[ object.uuid ];
 
@@ -19348,11 +19355,11 @@
 
 					if ( depthTest ) {
 
-						enable( gl.DEPTH_TEST );
+						enable( gl.DEPTH_TEST );//开启深度测试 
 
 					} else {
 
-						disable( gl.DEPTH_TEST );
+						disable( gl.DEPTH_TEST );//禁用深度测试 会导致后面绘制的片段将会总是会渲染在之前绘制片段的上面，即使之前绘制的片段本就应该渲染在最前面
 
 					}
 
@@ -19362,14 +19369,14 @@
 
 					if ( currentDepthMask !== depthMask && ! locked ) {
 
-						gl.depthMask( depthMask );
-						currentDepthMask = depthMask;
+						gl.depthMask( depthMask );//设置是否写入深度缓存。默认值：true，表示启用写入。只在深度测试被启用的时候才有效果。
+						currentDepthMask = depthMask;//更新currentDepthMask
 
 					}
 
 				},
 
-				setFunc: function ( depthFunc ) {
+				setFunc: function ( depthFunc ) {//将输入像素深度与当前深度缓冲区值进行比较的函数。
 
 					if ( currentDepthFunc !== depthFunc ) {
 
@@ -19379,57 +19386,57 @@
 
 								case NeverDepth:
 
-									gl.depthFunc( gl.NEVER );
+									gl.depthFunc( gl.NEVER );//永不通过
 									break;
 
 								case AlwaysDepth:
 
-									gl.depthFunc( gl.ALWAYS );
+									gl.depthFunc( gl.ALWAYS );//总是通过
 									break;
 
 								case LessDepth:
 
-									gl.depthFunc( gl.LESS );
+									gl.depthFunc( gl.LESS );//如果传入值小于深度缓冲值，则通过
 									break;
 
 								case LessEqualDepth:
 
-									gl.depthFunc( gl.LEQUAL );
+									gl.depthFunc( gl.LEQUAL );//如果传入值小于或等于深度缓冲区值，则通过
 									break;
 
 								case EqualDepth:
 
-									gl.depthFunc( gl.EQUAL );
+									gl.depthFunc( gl.EQUAL );//如果传入值等于深度缓冲区值，则通过
 									break;
 
 								case GreaterEqualDepth:
 
-									gl.depthFunc( gl.GEQUAL );
+									gl.depthFunc( gl.GEQUAL );//如果传入值大于或等于深度缓冲区值，则通过
 									break;
 
 								case GreaterDepth:
 
-									gl.depthFunc( gl.GREATER );
+									gl.depthFunc( gl.GREATER );//如果传入值大于深度缓冲区值，则通过
 									break;
 
 								case NotEqualDepth:
 
-									gl.depthFunc( gl.NOTEQUAL );
+									gl.depthFunc( gl.NOTEQUAL );//如果传入的值不等于深度缓冲区值，则通过
 									break;
 
 								default:
 
-									gl.depthFunc( gl.LEQUAL );
+									gl.depthFunc( gl.LEQUAL );//如果传入值小于或等于深度缓冲区值，则通过
 
 							}
 
 						} else {
 
-							gl.depthFunc( gl.LEQUAL );
+							gl.depthFunc( gl.LEQUAL );//如果传入值小于或等于深度缓冲区值，则通过
 
 						}
 
-						currentDepthFunc = depthFunc;
+						currentDepthFunc = depthFunc;//更新currentDepthFunc
 
 					}
 
@@ -19485,11 +19492,11 @@
 
 					if ( stencilTest ) {
 
-						enable( gl.STENCIL_TEST );
+						enable( gl.STENCIL_TEST );//开启模板测试
 
 					} else {
 
-						disable( gl.STENCIL_TEST );
+						disable( gl.STENCIL_TEST );//禁用模板测试
 
 					}
 
@@ -19506,14 +19513,17 @@
 
 				},
 
-				setFunc: function ( stencilFunc, stencilRef, stencilMask ) {
-
+				setFunc: function ( stencilFunc, stencilRef, stencilMask ) {//设置stencil的测试方式，即怎样才算通过测试
+                    //判断是否需要重新设置
 					if ( currentStencilFunc !== stencilFunc ||
 					     currentStencilRef 	!== stencilRef 	||
 					     currentStencilFuncMask !== stencilMask ) {
 
 						gl.stencilFunc( stencilFunc, stencilRef, stencilMask );
-
+						//stencilFunc：指定测试函数，允许的值为NEVER、LESS、LEQUAL、GREATER、GEQUAL、EQUAL、NOTEQUAL、ALWAYS。这些名字含义很明确，不再详述。
+                        //stencilRef：用来做stencil测试的参考值。
+                        //stencilMask：指定操作掩码，在测试的时候会先将stencilRef与stencilMask进行与运算，再将stencilRef与buffer中的值进行与运算，最后将两个结果进行比较，比较的方法由func参数所指定。
+                        //更新
 						currentStencilFunc = stencilFunc;
 						currentStencilRef = stencilRef;
 						currentStencilFuncMask = stencilMask;
@@ -19522,7 +19532,7 @@
 
 				},
 
-				setOp: function ( stencilFail, stencilZFail, stencilZPass ) {
+				setOp: function ( stencilFail, stencilZFail, stencilZPass ) {//指定通过stencil测试和未通过测试时要怎么处理
 
 					if ( currentStencilFail	 !== stencilFail 	||
 					     currentStencilZFail !== stencilZFail ||
@@ -19625,8 +19635,8 @@
 			var texture = gl.createTexture();
 
 			gl.bindTexture( type, texture );
-			gl.texParameteri( type, gl.TEXTURE_MIN_FILTER, gl.NEAREST );
-			gl.texParameteri( type, gl.TEXTURE_MAG_FILTER, gl.NEAREST );
+			gl.texParameteri( type, gl.TEXTURE_MIN_FILTER, gl.NEAREST );//设置纹理缩小时采用就近过滤方式
+			gl.texParameteri( type, gl.TEXTURE_MAG_FILTER, gl.NEAREST );//设置纹理放大时采用就近过滤方式
 
 			for ( var i = 0; i < count; i ++ ) {
 
@@ -19811,15 +19821,18 @@
 
 					switch ( blending ) {
 						//blendFunc，使用这个函数可以给源颜色和目标颜色分别设置不同的混合系数
-						//blendEquation函数中指定的内置常量  相对应的就是blendEquationSeparate函数了。使用这个函数，就能对RGB颜色和透明度分别进行设置了
-	                    //gl.FUNC_ADD：源颜色 + 目标颜色
-	                    //gl.FUNC_SUBTRACT：源颜色 - 目标颜色
-	                    //gl.FUNC_REVERSE_SUBTRACT：目标颜色 - 源颜色
-	                    //blendFuncSeparate 函数
+						//blendFuncSeparate 函数
 						//第一个参数：源颜色(SRC)的混合系数
 						//第二个参数：目标颜色(DST)的混合系数
 						//第三个参数：源颜色(SRC)的透明度的混合系数
 						//第四个参数：目标颜色(DST)的透明度的混合系数
+						//blendEquation:指定颜色混合的方式  
+                        //gl.FUNC_ADD：源颜色 + 目标颜色
+	                    //gl.FUNC_SUBTRACT：源颜色 - 目标颜色
+	                    //gl.FUNC_REVERSE_SUBTRACT：目标颜色 - 源颜色
+						//blendEquationSeparate:使用这个函数，就能对RGB颜色和透明度分别设置混合的方式
+	                    
+	                   
 						case AdditiveBlending:
 
 							if ( premultipliedAlpha ) {
@@ -19952,11 +19965,11 @@
 
 				if ( flipSided ) {
 
-					gl.frontFace( gl.CW );
+					gl.frontFace( gl.CW );//设置顺时针多边形为正面
 
 				} else {
 
-					gl.frontFace( gl.CCW );
+					gl.frontFace( gl.CCW );//设置逆时针多边形为正面
 
 				}
 
@@ -19970,21 +19983,21 @@
 
 			if ( cullFace !== CullFaceNone ) {
 
-				enable( gl.CULL_FACE );
+				enable( gl.CULL_FACE );//开启面剔除
 
 				if ( cullFace !== currentCullFace ) {
 
 					if ( cullFace === CullFaceBack ) {
 
-						gl.cullFace( gl.BACK );
+						gl.cullFace( gl.BACK );//剔除背向面
 
 					} else if ( cullFace === CullFaceFront ) {
 
-						gl.cullFace( gl.FRONT );
+						gl.cullFace( gl.FRONT );//剔除正向面
 
 					} else {
 
-						gl.cullFace( gl.FRONT_AND_BACK );
+						gl.cullFace( gl.FRONT_AND_BACK );//剔除正向面和背向面
 
 					}
 
@@ -19992,7 +20005,7 @@
 
 			} else {
 
-				disable( gl.CULL_FACE );
+				disable( gl.CULL_FACE );//禁止面剔除
 
 			}
 
@@ -21512,13 +21525,13 @@
 			_width = width;
 			_height = height;
 
-			_canvas.width = width * _pixelRatio;
-			_canvas.height = height * _pixelRatio;
+			_canvas.width = width * _pixelRatio;//像素宽 _pixelRatio影响画面的清晰度和锯齿
+			_canvas.height = height * _pixelRatio;//像素高
 
 			if ( updateStyle !== false ) {
 
-				_canvas.style.width = width + 'px';
-				_canvas.style.height = height + 'px';
+				_canvas.style.width = width + 'px';//物理宽
+				_canvas.style.height = height + 'px';//物理高
 
 			}
 
@@ -21540,7 +21553,7 @@
 			_width = width;
 			_height = height;
 
-			_pixelRatio = pixelRatio;
+			_pixelRatio = pixelRatio;//pixelRatio:当前显示设备的物理像素分辨率与CSS像素分辨率的比值。该值也可以被解释为像素大小的比例：即一个CSS像素的大小相对于一个物理像素的大小的比值。
 
 			_canvas.width = width * pixelRatio;
 			_canvas.height = height * pixelRatio;
@@ -23629,7 +23642,7 @@
 
 					}
 
-					if ( _gl.checkFramebufferStatus( _gl.FRAMEBUFFER ) === _gl.FRAMEBUFFER_COMPLETE ) {
+					if ( _gl.checkFramebufferStatus( _gl.FRAMEBUFFER ) === _gl.FRAMEBUFFER_COMPLETE ) {//检查帧缓冲是否完整 配置成功checkFramebufferStatus:检查帧缓冲是否完整
 
 						// the following if statement ensures valid read requests (no out-of-bounds pixels, see #8604)
 
@@ -28207,19 +28220,19 @@
 
 		// generate vertices, normals and uvs
 
-		for ( iy = 0; iy <= heightSegments; iy ++ ) {//由上往下遍历
+		for ( iy = 0; iy <= heightSegments; iy ++ ) {
 
 			var verticesRow = [];
 
 			var v = iy / heightSegments;
 
-			for ( ix = 0; ix <= widthSegments; ix ++ ) {//由左向右遍历 获取顶点数据(起点为左边界)
+			for ( ix = 0; ix <= widthSegments; ix ++ ) {
 
 				var u = ix / widthSegments;
 
 				// vertex
 
-				vertex.x = - radius * Math.cos( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );//phiStart + u * phiLength:顶点与原点的连线在XZ平面的投影与-X轴的夹角 thetaStart + v * thetaLength:顶点与原点的连线与+Y轴的夹角
+				vertex.x = - radius * Math.cos( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
 				vertex.y = radius * Math.cos( thetaStart + v * thetaLength );
 				vertex.z = radius * Math.sin( phiStart + u * phiLength ) * Math.sin( thetaStart + v * thetaLength );
 
@@ -28232,7 +28245,7 @@
 
 				// uv
 
-				uvs.push( u, 1 - v );//u:0-1 从左向右  v:1-0 从上往下
+				uvs.push( u, 1 - v );
 
 				verticesRow.push( index ++ );
 
@@ -35196,7 +35209,7 @@
 
 		// Get sequence of points using getPoint( t )
 
-		getPoints: function ( divisions ) {
+		getPoints: function ( divisions ) {//根据分段数 获取构成指定类型曲线的顶点位置坐标
 
 			if ( divisions === undefined ) divisions = 5;
 
@@ -35523,7 +35536,7 @@
 
 	LineCurve.prototype.isLineCurve = true;
 
-	LineCurve.prototype.getPoint = function ( t, optionalTarget ) {
+	LineCurve.prototype.getPoint = function ( t, optionalTarget ) {//获取起点v1,终点v2 的LineCurve直线上,对应比例t处的位置
 
 		var point = optionalTarget || new Vector2();
 
@@ -35722,21 +35735,21 @@
 
 			var points = [], last;
 
-			for ( var i = 0, curves = this.curves; i < curves.length; i ++ ) {
+			for ( var i = 0, curves = this.curves; i < curves.length; i ++ ) {//遍历曲线每个小分段
 
 				var curve = curves[ i ];
 				var resolution = ( curve && curve.isEllipseCurve ) ? divisions * 2
 					: ( curve && curve.isLineCurve ) ? 1
 						: ( curve && curve.isSplineCurve ) ? divisions * curve.points.length
-							: divisions;
+							: divisions;//根据曲线curve类型 确定分段数
 
-				var pts = curve.getPoints( resolution );
+				var pts = curve.getPoints( resolution );//获取曲线每个小分段坐标
 
 				for ( var j = 0; j < pts.length; j ++ ) {
 
 					var point = pts[ j ];
 
-					if ( last && last.equals( point ) ) continue; // ensures no consecutive points are duplicates
+					if ( last && last.equals( point ) ) continue; // ensures no consecutive points are duplicates 确保没有连续的点是重复的
 
 					points.push( point );
 					last = point;
@@ -36124,11 +36137,11 @@
 	 * Defines a 2d shape plane using paths.
 	 **/
 
-	// STEP 1 Create a path.
-	// STEP 2 Turn path into shape.
-	// STEP 3 ExtrudeGeometry takes in Shape/Shapes
-	// STEP 3a - Extract points from each shape, turn to vertices
-	// STEP 3b - Triangulate each shape, add faces.
+	// STEP 1 Create a path.创建一个路径
+	// STEP 2 Turn path into shape.将路径变成截面  
+	// STEP 3 ExtrudeGeometry takes in Shape/Shapes将截面拉伸成几何体  
+	// STEP 3a - Extract points from each shape, turn to vertices导出所有的截面顶点到vertices属性中  
+	// STEP 3b - Triangulate each shape, add faces.组织所有的顶点为三角面.  
 
 	function Shape() {
 
@@ -40621,7 +40634,7 @@
 
 	}
 
-	function ascSort( a, b ) {
+	function ascSort( a, b ) {//根据distance值进行升序排序
 
 		return a.distance - b.distance;
 
@@ -40629,11 +40642,11 @@
 
 	function intersectObject( object, raycaster, intersects, recursive ) {
 
-		if ( object.visible === false ) return;
+		if ( object.visible === false ) return;//物体隐藏直接返回
 
-		object.raycast( raycaster, intersects );
+		object.raycast( raycaster, intersects );//执行不同对象的raycast射线检测方法
 
-		if ( recursive === true ) {
+		if ( recursive === true ) {//递归遍历检测子对象
 
 			var children = object.children;
 
@@ -40663,8 +40676,9 @@
 
 			if ( ( camera && camera.isPerspectiveCamera ) ) {
 
-				this.ray.origin.setFromMatrixPosition( camera.matrixWorld );
-				this.ray.direction.set( coords.x, coords.y, 0.5 ).unproject( camera ).sub( this.ray.origin ).normalize();
+				this.ray.origin.setFromMatrixPosition( camera.matrixWorld );//将相机的世界坐标赋值给射线的原点
+				this.ray.direction.set( coords.x, coords.y, 0.5 ).unproject( camera ).sub( this.ray.origin ).normalize();//将相机的位置坐标减去点击处的世界坐标向量 作为射线的方向向量
+				//this.ray.direction.set( coords.x, coords.y, 0.5 ).unproject( camera ):获取点击处的世界坐标
 
 			} else if ( ( camera && camera.isOrthographicCamera ) ) {
 

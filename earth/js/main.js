@@ -2,7 +2,7 @@ var Globe = function(){
 	var camera, scene, renderer;
 	var mesh,obj;
 	var DirectionalLight
-	var cloudsphere,pointsNum=40,fdNum=50,pointsSize=.5;
+	var cloudsphere,pointsNum=2000,fdNum=50,pointsSize=.5;
 	var earthSphere,stats;
 	var uniformsArr=[],splineArr=[],lengthArr=[],particlesArr=[],lineArr=[],pointsIndex=0;
 	var Start_random=true,Rotate_points=false;
@@ -33,7 +33,7 @@ var Globe = function(){
 		light.position.set( 0, -1, 0 );
 		scene.add( light );
 
-		var earthGeometry = new THREE.SphereGeometry( 4, 100, 100 );
+		var earthGeometry = new THREE.SphereGeometry( 4, 40, 40 );
 		var map = new THREE.TextureLoader().load( "css/earth_surface.jpg" );
 		var normalMap = new THREE.TextureLoader().load( "css/earth_normals.jpg" );
 		var specularMap = new THREE.TextureLoader().load( "css/earth_specular.jpg" );
@@ -121,8 +121,9 @@ var Globe = function(){
 		this.JSQEX_removeall();
 		// var positionsAll=[],uvsAll=[],colorsAll=[],sizesAll=[];
 	    for(var ii=0;ii<pointsNum;ii+=2){
-	    	var position1=latlngPosFromLatLng(locations[Start_random?ii:pointsIndex].lat,locations[Start_random?ii:pointsIndex].lng,4.05);
-			var position2=latlngPosFromLatLng(locations[ii+1].lat,locations[ii+1].lng,4.05);
+	    	var dd=ii%300;
+	    	var position1=latlngPosFromLatLng(locations[Start_random?dd:pointsIndex].lat,locations[Start_random?dd:pointsIndex].lng,4.05);
+			var position2=latlngPosFromLatLng(locations[dd+1].lat,locations[dd+1].lng,4.05);
 			var _position1=new THREE.Vector3(position1.x,position1.y,position1.z);
 			var _position2=new THREE.Vector3(position2.x,position2.y,position2.z);
 			var length=new THREE.Vector3().subVectors(position1,position2).length()/2;
@@ -253,7 +254,7 @@ var Globe = function(){
 		gui.add( API, 'Rotate points' ).onChange( function(val) {
 				Rotate_points=val;
 		} );
-		gui.add( API, 'Num points' ,40, 200, 2).onChange( function(val) {
+		gui.add( API, 'Num points' ,40, 2000, 2).onChange( function(val) {
 				pointsNum=val;
 				scope.addline_points();
 		} );
