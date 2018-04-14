@@ -2,7 +2,7 @@ var Globe = function(){
 	var camera, scene, renderer;
 	var mesh,obj;
 	var DirectionalLight
-	var cloudsphere,pointsNum=2000,fdNum=50,pointsSize=.5;
+	var cloudsphere,pointsNum=200,fdNum=50,pointsSize=.5;
 	var earthSphere,stats;
 	var uniformsArr=[],splineArr=[],lengthArr=[],particlesArr=[],lineArr=[],pointsIndex=0;
 	var Start_random=true,Rotate_points=false;
@@ -254,7 +254,7 @@ var Globe = function(){
 		gui.add( API, 'Rotate points' ).onChange( function(val) {
 				Rotate_points=val;
 		} );
-		gui.add( API, 'Num points' ,40, 2000, 2).onChange( function(val) {
+		gui.add( API, 'Num points' ,20, 200, 2).onChange( function(val) {
 				pointsNum=val;
 				scope.addline_points();
 		} );
