@@ -6,7 +6,6 @@ var files = {
 		"管道_pipeline/index",
 		"汽车展示_car/index",
 		"Shadertoy_Shadertoy/index",
-		"国家选中高亮_Country-Select-Highlight/index",
+		"国家选中高亮_Country-Select-Highlight/index"
 	]
-	
 };
