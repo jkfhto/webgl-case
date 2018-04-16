@@ -6,7 +6,7 @@ var Car = function(){
 	var carobjArr = [], Mesh_rotate = [[],[],[]] ,Material_rim_arr=[];
 	var wheelRadius = 72.7445023842048;//轮胎半径
 	var Car_index = 0;
-	var iswheelRotate = true;
+	var iswheelRotate = true, iscameraRotate = true;
 	var Material_body, Material_glass, Material_bumper, Material_rim, Material_Bkg, meshBkg, Select_id;
 	this.init = function() {
 	    stats = new Stats();
@@ -50,6 +50,7 @@ var Car = function(){
 		this.loadmainBg();
 		this.initCar();
 		this.bindEvent();
+		animate();
 	};
 
 	this.initCar = function(){
@@ -216,6 +217,7 @@ var Car = function(){
 					'车窗-combine'		: "THREE.MixOperation",
 					'轮胎运动'    	: true,
 					'轮毂颜色'   : 0xb8b8b8,
+					'镜头运动'    	: true,
 				};
 		var gui = new dat.GUI();
 		gui.addColor( API, '车身-color' ).onChange( function(val) {
@@ -268,8 +270,20 @@ var Car = function(){
 				Material_rim_arr[Car_index].color.setHex( val );
 		} );
 
+		// Material_rim = new THREE.MeshPhongMaterial({//轮缘
+		//         color: 0xb8b8b8,
+		//         reflectivity: 0.5,
+		//         combine: THREE.MixOperation,
+		//         envMap: textureCube_env,
+		//         specular: 0x202020
+		//     });
+
 		gui.add( API, '轮胎运动' ).onChange( function(val) {
 				iswheelRotate = val;
+		} );
+
+		gui.add( API, '镜头运动' ).onChange( function(val) {
+				iscameraRotate = val;
 		} );
 
 	    $(".ac").css({"z-index":100})
@@ -440,13 +454,15 @@ var Car = function(){
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	};
 
-	this.animate = function() {
+	function animate() {
 		pointLight.position.copy(camera.position);
 		scope.wheelRun();
 		stats.update();
-		controls.update();
+		if(iscameraRotate){
+			controls.update();
+		}
 		renderer.render( scene, camera );
-		requestAnimationFrame( scope.animate );
+		requestAnimationFrame( animate );
 	};
 
 	this.wheelRun = function(){
@@ -469,5 +485,4 @@ var Car = function(){
 }
 var Carobj=new Car();
 Carobj.init();
-Carobj.animate();
 Carobj.addGui();
