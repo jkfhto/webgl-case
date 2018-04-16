@@ -9659,7 +9659,7 @@
 	 * @author mrdoob / http://mrdoob.com/
 	 */
 
-	function WebGLAttributes( gl ) {
+	function WebGLAttributes( gl ) {//着色器程序中attribute变量关联的缓冲区对象的创建,释放,获取,更新 已经临时存储在闭包中
 
 		var buffers = {};//用来存储传入渲染管线的数据（保存场景中几何体geometry的 position,normal,color,uv等数据的缓冲区对象 通过uuid关联到具体哪类数据）
 
@@ -9799,7 +9799,7 @@
 
 			if ( attribute.isInterleavedBufferAttribute ) attribute = attribute.data;
 
-			var data = buffers[ attribute.uuid ];//获取指定的缓冲区关联对象
+			var data = buffers[ attribute.uuid ];//获取指定的缓冲区关联对象(通过geometry.attributes的uuid)
 
 			if ( data === undefined ) {//没有获取到指定的缓存区对象新建缓冲区对象
 
@@ -16502,7 +16502,7 @@
 
 	}
 
-	function WebGLRenderList() {//渲染列表实例
+	function WebGLRenderList() {//渲染列表实例 保存场景中绘制的物体 可以对绘制的物体进行排序分组 根据指定的排序绘制物体 
 
 		var renderItems = [];//保存renderItem渲染对象
 		var renderItemsIndex = 0;
@@ -16914,7 +16914,7 @@
 
 			if ( buffergeometry ) return buffergeometry;
 
-			geometry.addEventListener( 'dispose', onGeometryDispose );//绑定删除几何对象的事件
+			geometry.addEventListener( 'dispose', onGeometryDispose );//绑定删除几何对象的事件 用于调用geometry的dispose事件时内存释放
 
 			if ( geometry.isBufferGeometry ) {//geometry分为geometry和BufferGeometry两种类型，BufferGeometry占用更少的内存，效率更高
 
@@ -17368,9 +17368,9 @@
 	 * @author mrdoob / http://mrdoob.com/
 	 */
 
-	function WebGLObjects( geometries, infoRender ) {
+	function WebGLObjects( geometries, infoRender ) {//闭包  geometries:WebGLObjects实例对象的返回值 
 
-		var updateList = {};
+		var updateList = {};//缓存
 
 		function update( object ) {
 
@@ -21202,12 +21202,12 @@
 			_premultipliedAlpha = parameters.premultipliedAlpha !== undefined ? parameters.premultipliedAlpha : true,
 			_preserveDrawingBuffer = parameters.preserveDrawingBuffer !== undefined ? parameters.preserveDrawingBuffer : false;
 
-		var lightsArray = [];
-		var shadowsArray = [];
+		var lightsArray = [];//存储场景scene中的光源对象light
+		var shadowsArray = [];//存储场景scene中产生阴影的光源对象light
 
 		var currentRenderList = null;
 
-		var spritesArray = [];
+		var spritesArray = [];//存储场景scene中的精灵对象sprite
 		var flaresArray = [];
 
 		// public properties
@@ -22392,19 +22392,19 @@
 
 			var visible = object.layers.test( camera.layers );
 
-			if ( visible ) {
+			if ( visible ) {//如果物体可见 根据物体分类 插入到对应数组中
 
-				if ( object.isLight ) {
+				if ( object.isLight ) {//光源
 
-					lightsArray.push( object );
+					lightsArray.push( object );//插入数组
 
 					if ( object.castShadow ) {
 
-						shadowsArray.push( object );
+						shadowsArray.push( object );//插入数组
 
 					}
 
-				} else if ( object.isSprite ) {
+				} else if ( object.isSprite ) {//精灵
 
 					if ( ! object.frustumCulled || _frustum.intersectsSprite( object ) ) {
 
@@ -22412,9 +22412,9 @@
 
 					}
 
-				} else if ( object.isLensFlare ) {
+				} else if ( object.isLensFlare ) {//镜头光晕
 
-					flaresArray.push( object );
+					flaresArray.push( object );//插入数组
 
 				} else if ( object.isImmediateRenderObject ) {
 

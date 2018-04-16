@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>globe</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				margin: 0px;
+				background-color: #000000;
+				overflow: hidden;
+				font-family: 'PT Sans', 'Verdana','Open Sans', sans-serif;
+			}
+			#Country_name{
+				position: absolute;
+			    left: 0px;
+			    width: 100%;
+			    bottom: 0px;
+			    height: 40px;
+			    background: rgba(200,200,200,0.1);
+			    text-align: center;
+			    z-index: 10;
+			    font-size: 2.0em;
+			    color: #ff0;
+			    pointer-events: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="Country_name"></div>
+		<script id="globeVertexShader" type="x-shader/x-vertex">
+		varying vec2 vUv;
+		void main()
+		{
+			gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0);
+			vUv = uv;
+		}
+		</script>
+
+		<script id="globeFragmentShader" type="x-shader/x-fragment">   
+		uniform sampler2D mapIndex;
+		uniform sampler2D lookup;
+		uniform sampler2D outline;
+		uniform sampler2D blendImage;
+		varying vec2 vUv;
+		void main() 
+		{
+			vec4 mapColor = texture2D( mapIndex, vUv );//获取国家颜色索引贴图对应的颜色值
+			float indexedColor = mapColor.y;//使用获取的颜色值
+			vec2 lookupUV = vec2( indexedColor, 0.0 );//获取uv坐标
+			vec4 lookupColor = texture2D( lookup, lookupUV );//被点击选中的国家对应的颜色值为设置的高亮选取颜色值 
+			vec4 outlineColor = texture2D( outline, vUv );
+			vec4 blendColor = texture2D( blendImage, vUv );
+			// if (outlineColor.x > 0.1) outlineColor = vec4(1.0,1.0,1.0,1.0);
+
+			gl_FragColor = 0.5 * outlineColor + 1.0 * lookupColor + 0.5 * blendColor;//最终的颜色
+		}
+		</script>
+		<script src="../js/three.js"></script>
+        <script src="../js/OrbitControls.js"></script>
+        <script type="text/javascript" src="../js/dat.gui.min.js"></script>
+        <script src="../js/stats.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+	</body>
+</html>
