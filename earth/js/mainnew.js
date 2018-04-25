@@ -318,7 +318,7 @@ var Globe = function(){
 				pointsNum=val;
 				scope.addline_points();
 		} );
-		gui.add( API, 'Size points' ,.5, 2, .1).onChange( function(val) {
+		gui.add( API, 'Size points' ,.05, 2, ..05).onChange( function(val) {
 				pointsSize=val;
 				scope.addline_points();
 		} );
