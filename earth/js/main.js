@@ -93,6 +93,7 @@ var Globe = function(){
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		renderer.shadowMap.enabled = true;
+		// renderer.gammaOutput = true;
 		document.body.appendChild( renderer.domElement );
 		controls=new THREE.OrbitControls(camera,renderer.domElement);
 		window.addEventListener( 'resize', this.onWindowResize, false );
@@ -290,7 +291,7 @@ var Globe = function(){
 		gui.add( API, 'Rotate points' ).onChange( function(val) {
 				Rotate_points=val;
 		} );
-		gui.add( API, 'Num points' ,20, 200, 2).onChange( function(val) {
+		gui.add( API, 'Num points' ,20,800, 2).onChange( function(val) {
 				pointsNum=val;
 				scope.addline_points();
 		} );

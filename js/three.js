@@ -231,7 +231,7 @@
 	var NeverDepth = 0;
 	var AlwaysDepth = 1;
 	var LessDepth = 2;
-	var LessEqualDepth = 3;
+	var LessEqualDepth = 3;//小于等于
 	var EqualDepth = 4;
 	var GreaterEqualDepth = 5;
 	var GreaterDepth = 6;
@@ -3058,7 +3058,7 @@
 
 		},
 
-		projectOnPlane: function () {
+		projectOnPlane: function () {//计算与平面外一点距离最近的点
 
 			var v1 = new Vector3();
 
@@ -3294,7 +3294,7 @@
 
 		},
 
-		setFromMatrix4: function ( m ) {
+		setFromMatrix4: function ( m ) {//法线变化只与旋转 缩放有关 与平移无关
 
 			var me = m.elements;
 
@@ -3469,7 +3469,7 @@
 
 		},
 
-		getNormalMatrix: function ( matrix4 ) {
+		getNormalMatrix: function ( matrix4 ) {//获取法线矩阵 matrix4矩阵的逆转置矩阵 
 
 			return this.setFromMatrix4( matrix4 ).getInverse( this ).transpose();
 
@@ -3624,14 +3624,18 @@
 		this.mipmaps = [];
 
 		this.mapping = mapping !== undefined ? mapping : Texture.DEFAULT_MAPPING;
+        //纹理环绕方式: RepeatWrapping(_gl.REPEAT	对纹理的默认行为,重复纹理图像) 
+        //             MirroredRepeatWrapping(_gl.MIRRORED_REPEAT	和_gl.REPEAT一样，但每次重复图片是镜像放置的。)
+        //             ClampToEdgeWrapping(_gl.CLAMP_TO_EDGE	纹理坐标会被约束在0到1之间，超出的部分会重复纹理坐标的边缘，产生一种边缘被拉伸的效果。)
 
 		this.wrapS = wrapS !== undefined ? wrapS : ClampToEdgeWrapping;
 		this.wrapT = wrapT !== undefined ? wrapT : ClampToEdgeWrapping;
-
+        //纹理过滤 LinearFilter(_gl.NEAREST它会基于纹理坐标附近的纹理像素，计算出一个插值，近似出这些纹理像素之间的颜色。一个纹理像素的中心距离纹理坐标越近，那么这个纹理像素的颜色对最终的样本颜色的贡献越大。)
+        //_gl.NEAREST（当设置为GL_NEAREST的时候，会选择中心点最接近纹理坐标的那个像素。
 		this.magFilter = magFilter !== undefined ? magFilter : LinearFilter;
 		this.minFilter = minFilter !== undefined ? minFilter : LinearMipMapLinearFilter;
 
-		this.anisotropy = anisotropy !== undefined ? anisotropy : 1;
+		this.anisotropy = anisotropy !== undefined ? anisotropy : 1;//各向异性
 
 		this.format = format !== undefined ? format : RGBAFormat;
 		this.type = type !== undefined ? type : UnsignedByteType;
@@ -4553,8 +4557,8 @@
 
 	/*
 	 In options, we can specify:
-	 * Texture parameters for an auto-generated target texture
-	 * depthBuffer/stencilBuffer: Booleans to indicate if we should generate these buffers
+	 * Texture parameters for an auto-generated target texture 自动生成的目标纹理的纹理参数
+	 * depthBuffer/stencilBuffer: Booleans to indicate if we should generate these buffers 用于指示是否应该生成这些缓冲区的布尔值
 	*/
 	function WebGLRenderTarget( width, height, options ) {//帧缓存对象的关联对象
 
@@ -5601,7 +5605,7 @@
 
 		},
 
-		copyGammaToLinear: function ( color, gammaFactor ) {//伽马反校 将线性转到非线性（图片是在非线性空间创建的 转为线性空间进行计算）
+		copyGammaToLinear: function ( color, gammaFactor ) {//伽马反校 将线性转到非线性（么些图片是在非线性空间创建的 转为线性空间进行后续的计算）
 
 			if ( gammaFactor === undefined ) gammaFactor = 2.0;
 
@@ -5613,7 +5617,7 @@
 
 		},
 
-		copyLinearToGamma: function ( color, gammaFactor ) {//伽马校正 将线性转到非线性
+		copyLinearToGamma: function ( color, gammaFactor ) {//伽马校正 将线性转到非线性 
 
 			if ( gammaFactor === undefined ) gammaFactor = 2.0;
 
@@ -8017,13 +8021,13 @@
 	 * }
 	 */
 
-	function MeshDepthMaterial( parameters ) {
+	function MeshDepthMaterial( parameters ) {//将深度信息渲染到帧缓存对象
 
 		Material.call( this );
 
 		this.type = 'MeshDepthMaterial';
 
-		this.depthPacking = BasicDepthPacking;
+		this.depthPacking = BasicDepthPacking;//depthPacking影响最终写入帧缓存区的深度信息 BasicDepthPacking:默认直接采用gl_FragCoord.z赋值  RGBADepthPacking:采用packDepthToRGBA(gl_FragCoord.z)赋值
 
 		this.skinning = false;
 		this.morphTargets = false;
@@ -9737,9 +9741,9 @@
 
 		}
 
-		function updateBuffer( buffer, attribute, bufferType ) {//更新缓冲区对象
+		function updateBuffer( buffer, attribute, bufferType ) {//更新缓冲区对象 buffer:缓冲区对象(WebGLBuffer) bufferType:缓冲区数据类型(GL_ARRAY_BUFFER和GL_ELEMENT_ARRAY_BUFFER)  
 
-			var array = attribute.array;//获取顶点数据
+			var array = attribute.array;//获取类型化顶点数据
 			var updateRange = attribute.updateRange;//数组中需要更新的范围（updateRange.offset代表需要更新数据的偏移量和总个数）
 
 			gl.bindBuffer( bufferType, buffer );//绑定缓冲区对象
@@ -19658,12 +19662,12 @@
 		depthBuffer.setClear( 1 );
 		stencilBuffer.setClear( 0 );
 
-		enable( gl.DEPTH_TEST );
-		depthBuffer.setFunc( LessEqualDepth );
+		enable( gl.DEPTH_TEST );//开启深度测试
+		depthBuffer.setFunc( LessEqualDepth );//设置深度测试函数 
 
 		setFlipSided( false );
-		setCullFace( CullFaceBack );
-		enable( gl.CULL_FACE );
+		setCullFace( CullFaceBack );//设置面剔除
+		enable( gl.CULL_FACE );//开启面剔除
 
 		enable( gl.BLEND );
 		setBlending( NormalBlending );
@@ -19965,11 +19969,11 @@
 
 				if ( flipSided ) {
 
-					gl.frontFace( gl.CW );//设置顺时针多边形为正面
+					gl.frontFace( gl.CW );//设置顺时针构成的多边形为正面
 
 				} else {
 
-					gl.frontFace( gl.CCW );//设置逆时针多边形为正面
+					gl.frontFace( gl.CCW );//设置逆时针构成的多边形为正面
 
 				}
 
@@ -20027,22 +20031,22 @@
 
 		function setPolygonOffset( polygonOffset, factor, units ) {
 
-			if ( polygonOffset ) {
+			if ( polygonOffset ) {//设置多边形偏移 可以用于解决深度冲突 导致的闪烁问题
 
-				enable( gl.POLYGON_OFFSET_FILL );
+				enable( gl.POLYGON_OFFSET_FILL );//开启多边形偏移
 
-				if ( currentPolygonOffsetFactor !== factor || currentPolygonOffsetUnits !== units ) {
+				if ( currentPolygonOffsetFactor !== factor || currentPolygonOffsetUnits !== units ) {//偏移参数修改了 重新设置并更新
 
-					gl.polygonOffset( factor, units );
+					gl.polygonOffset( factor, units );//设置偏移参数
 
-					currentPolygonOffsetFactor = factor;
+					currentPolygonOffsetFactor = factor;//更新
 					currentPolygonOffsetUnits = units;
 
 				}
 
 			} else {
 
-				disable( gl.POLYGON_OFFSET_FILL );
+				disable( gl.POLYGON_OFFSET_FILL );//禁用多边形偏移
 
 			}
 
@@ -20052,11 +20056,11 @@
 
 			if ( scissorTest ) {
 
-				enable( gl.SCISSOR_TEST );
+				enable( gl.SCISSOR_TEST );//开启裁剪测试
 
 			} else {
 
-				disable( gl.SCISSOR_TEST );
+				disable( gl.SCISSOR_TEST );//禁用裁剪测试
 
 			}
 
@@ -21234,8 +21238,9 @@
 		// physically based shading
 
 		this.gammaFactor = 2.0;	// for backwards compatibility
-		this.gammaInput = false;
-		this.gammaOutput = false;
+		this.gammaInput = false;//gammaInput:true  会进行gamma反校正(颜色变暗) 对于输入的纹理图片，由于大多数情况下已经进行了伽马校正，因此我们要得到他们线性的颜色,需要进行gamma反校正 
+		this.gammaOutput = false;//gammaOutput:true  会进行gamma校正(颜色变亮) 由于CRT,LED等显示设备显示颜色时并非按照线性方式工作，因此我们在程序中输出的颜色，最终输出到显示器上时会产生亮度减弱的现象,需要进行gamma校正 
+
 
 		// physical lights
 
@@ -21847,8 +21852,8 @@
 
 			//
 
-			var index = geometry.index;
-			var position = geometry.attributes.position;
+			var index = geometry.index;//顶点索引
+			var position = geometry.attributes.position;//顶点位置
 			var rangeFactor = 1;
 
 			if ( material.wireframe === true ) {
@@ -21863,7 +21868,7 @@
 
 			if ( index !== null ) {
 
-				attribute = attributes.get( index );
+				attribute = attributes.get( index );//获取指定的WebGLAttributes实例对象
 
 				renderer = indexedBufferRenderer;
 				renderer.setIndex( attribute );
@@ -21876,7 +21881,7 @@
 
 				if ( index !== null ) {
 
-					_gl.bindBuffer( _gl.ELEMENT_ARRAY_BUFFER, attribute.buffer );
+					_gl.bindBuffer( _gl.ELEMENT_ARRAY_BUFFER, attribute.buffer );//绑定缓冲区对象
 
 				}
 
@@ -22238,7 +22243,7 @@
 			currentRenderList = renderLists.get( scene, camera );//通过scene的id信息和camera的id信息创建或获取WebGLRenderList渲染列表对象
 			currentRenderList.init();//初始化
 
-			projectObject( scene, camera, _this.sortObjects );//遍历scene场景的对象
+			projectObject( scene, camera, _this.sortObjects );//遍历scene场景的对象 分组 进行可见性判断(减少发送到gpu的数据量 提示性能)
 
 			if ( _this.sortObjects === true ) {//判断是否对场景中绘制的透明和不透明物体进行排序处理 将影响场景中物体的绘制顺序 影响最终的绘制结果
 
@@ -22281,7 +22286,7 @@
 			var opaqueObjects = currentRenderList.opaque;//获取渲染列表中保存不透明对象的数组对象
 			var transparentObjects = currentRenderList.transparent;//获取渲染列表中保存透明对象的数组对象
 
-			if ( scene.overrideMaterial ) {
+			if ( scene.overrideMaterial ) {//统一使用overrideMaterial材质渲染场景中的物体
 
 				var overrideMaterial = scene.overrideMaterial;
 
@@ -22843,7 +22848,7 @@
 					material.isShaderMaterial ||
 					material.skinning ) {
 
-					p_uniforms.setValue( _gl, 'viewMatrix', camera.matrixWorldInverse );//给着色器程序中的viewMatrix变量赋值
+					p_uniforms.setValue( _gl, 'viewMatrix', camera.matrixWorldInverse );//给着色器程序中的viewMatrix变量(视图矩阵)赋值 
 
 				}
 
@@ -23418,7 +23423,7 @@
 
 		this.setFaceCulling = function ( cullFace, frontFaceDirection ) {
 
-			state.setCullFace( cullFace );
+			state.setCullFace( cullFace );//设置面剔除
 			state.setFlipSided( frontFaceDirection === FrontFaceDirectionCW );
 
 		};
