@@ -7,6 +7,6 @@ var files = {
 		"汽车展示_car/index",
 		"Shadertoy_Shadertoy/index",
 		"国家选中高亮_Country-Select-Highlight/index",
-		"Photoshop-blend/index",
+		"Photoshop_blend/index",
 	]
 };
