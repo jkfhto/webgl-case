@@ -21199,7 +21199,7 @@
 		var _canvas = parameters.canvas !== undefined ? parameters.canvas : document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' ),
 			_context = parameters.context !== undefined ? parameters.context : null,
 
-			_alpha = parameters.alpha !== undefined ? parameters.alpha : false,
+			_alpha = parameters.alpha !== undefined ? parameters.alpha : false,//设置为true 着色器中设置gl_FragColor透明度为0 帧缓存颜色才会透明 否则不会生效
 			_depth = parameters.depth !== undefined ? parameters.depth : true,
 			_stencil = parameters.stencil !== undefined ? parameters.stencil : true,
 			_antialias = parameters.antialias !== undefined ? parameters.antialias : false,

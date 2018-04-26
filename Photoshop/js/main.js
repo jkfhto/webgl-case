@@ -41,6 +41,7 @@ var Photoshop_blend = function(){
 				value: far
 			},
 			resolution: {
+				type :"v2",
 	            value: new THREE.Vector2(window.innerWidth, window.innerHeight)
 	        },
 	    };
