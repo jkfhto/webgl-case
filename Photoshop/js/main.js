@@ -7,7 +7,9 @@ var Photoshop_blend = function(){
 	this.init = function() {
 		stats = new Stats();
 		document.body.appendChild(stats.dom);
-	    camera = new THREE.PerspectiveCamera(50,window.innerWidth / window.innerHeight,1,10000);
+		var near = 1.;
+		var far = 1000.;
+	    camera = new THREE.PerspectiveCamera(50,window.innerWidth / window.innerHeight,near,far);
 	    camera.position.z = 220;
 
 	    scene = new THREE.Scene();
@@ -20,12 +22,27 @@ var Photoshop_blend = function(){
 	    })
 
 	    uniforms = {
-	      texture1:   { value: new THREE.TextureLoader().load( "css/pic1.jpg" ) },
-	      texture2:   { value: new THREE.TextureLoader().load( "css/pic2.jpg" ) },
-	      blendNum: {
-	        type: "i",
-	        value: 1
-	      },
+		    texture1:   { value: new THREE.TextureLoader().load( "css/pic1.jpg" ) },
+		    texture2:   { value: new THREE.TextureLoader().load( "css/pic2.jpg" ) },
+		    blendNum: {
+		        type: "i",
+		        value: 1
+		    },
+		    time: {
+				type: "f",
+				value: 0.1
+			},
+			near: {
+				type: "f",
+				value: near
+			},
+			far: {
+				type: "f",
+				value: far
+			},
+			resolution: {
+	            value: new THREE.Vector2(window.innerWidth, window.innerHeight)
+	        },
 	    };
 
 	    ShaderMaterial = new THREE.ShaderMaterial({
@@ -38,7 +55,7 @@ var Photoshop_blend = function(){
 	    // mesh.rotation.y = THREE.Math.degToRad(180/2);
 	    scene.add(mesh);
 
-	    renderer = new THREE.WebGLRenderer();
+	    renderer = new THREE.WebGLRenderer({alpha:true});
 	    renderer.setPixelRatio(window.devicePixelRatio);
 
 	    document.body.appendChild(renderer.domElement);
@@ -56,6 +73,11 @@ var Photoshop_blend = function(){
 	};
 
 	this.animate = function() {
+		var time = Date.now();
+		var looptime = 20 * 100;//设置速度
+		var t = ( time % looptime ) / looptime;//限制在[0,1]范围
+		uniforms.time.value = t;
+		// uniforms.time.value += .005;
 	    requestAnimationFrame(scope.animate);
 	    scope.render();
     };

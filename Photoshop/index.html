@@ -26,10 +26,6 @@
 			}
 		</script>
 	    <script id="fragmentShader" type="x-shader/x-fragment">
-	    	varying vec2 vUv;
-            uniform sampler2D texture1;
-            uniform sampler2D texture2;
-            uniform int blendNum;
 
 		    vec3 darken( vec3 s, vec3 d )
 			{
@@ -189,7 +185,7 @@
 				vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
 				vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
 				vec4 q = mix(vec4(p.xyw, c.r), vec4(c.r, p.yzx), step(p.x, c.r));
-				
+
 				float d = q.x - min(q.w, q.y);
 				float e = 1.0e-10;
 				return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
@@ -271,6 +267,21 @@
 			    return vec3(0.0);
 			}
 
+			float LinearizeDepth(float depth, float near, float far)//将屏幕空间中非线性的深度值变换至线性深度值
+			{
+			    float z = depth * 2.0 - 1.0; // back to NDC 
+			    // return z;
+			    return (2.0 * near * far) / (far + near - z * (far - near));    
+			}
+            varying vec2 vUv;
+            uniform sampler2D texture1;
+            uniform sampler2D texture2;
+            uniform int blendNum;
+            uniform float time;
+            uniform vec2 resolution;
+            uniform float near;
+            uniform float far;
+
 			void main()
 			{
 				// vec2 uv = gl_FragCoord.xy / iResolution.xy * vec2(1.0,-1.0) + vec2(0.0, 1.0);
@@ -283,8 +294,8 @@
 				vec3 d = texture2D( texture2, vUv ).xyz;
 
 				vec3 c = blend(s,d,blendNum);
-
 				gl_FragColor = vec4(c,1.0);
+				// gl_FragColor = vec4(mix(s,d,sin(dd)),1.0);//设置透明度生效 需要实例化WebGLRenderer对象是传递参数({alpha:true}); 否则默认透明度
 
 			}
 	    </script>
