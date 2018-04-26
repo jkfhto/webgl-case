@@ -18,7 +18,6 @@ var Scene_scan = function(){
 		camera.add( pointLight );
 		scene.add( camera );
 
-		// model
 		var onProgress = function ( xhr ) {
 			if ( xhr.lengthComputable ) {
 				var percentComplete = xhr.loaded / xhr.total * 100;
