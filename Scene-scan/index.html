@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>场景扫描特效</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script id="vertexShader" type="x-shader/x-vertex">
+			varying vec2 vUv;
+			void main()
+			{
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0);
+				vUv = uv;
+			}
+		</script>
+	    <script id="fragmentShader" type="x-shader/x-fragment">
+
+			float LinearizeDepth(float depth, float near, float far)//将屏幕空间中非线性的深度值变换至线性深度值
+			{
+			    float z = depth * 2.0 - 1.0; // back to NDC
+			    // return z;
+			    return (2.0 * near * far) / (far + near - z * (far - near));
+			}
+            varying vec2 vUv;
+            uniform sampler2D texture1;
+            uniform float time;
+            uniform float near;
+            uniform float far;
+            uniform vec3 _ScanColor;//扫描网颜色
+            uniform float _ScanWidth;//扫描网宽度 问题:不知道整个场景的深度范围 不好设置扫描网宽度 可能过宽  或者过窄
+
+			void main()
+			{
+				vec3 s = texture2D( texture1, vUv ).xyz;
+				float depth = LinearizeDepth(gl_FragCoord.z,near,far) / far; // 将深度转到线性空间[0-1],默认是非线性的接近1.0
+				// float _ScanWidth =0.05;
+				vec3 _ScanColor1 = vec3(_ScanColor);//不赋值给_ScanColor1 变量 直接使用_ScanColor1变量会保存???
+				if (depth < time && depth > (time - _ScanWidth) && depth < 1.0)
+				{
+				    float diff = 1.0 - (time - depth) / (_ScanWidth);//透明度[0-1];
+				    _ScanColor1 *= diff;
+				    gl_FragColor = vec4(vec3(s+_ScanColor1),1.0);
+				}else{
+					gl_FragColor = vec4(s,1.0);
+				}
+			}
+	    </script>
+
+		<script src="../js/three.js"></script>
+
+		<script src="js/DDSLoader.js"></script>
+		<script src="js/MTLLoader.js"></script>
+		<script src="js/OBJLoader.js"></script>
+        <script type="text/javascript" src="../js/dat.gui.min.js"></script>
+		<script src="../js/OrbitControls.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+
+	</body>
+</html>
