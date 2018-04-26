@@ -48,7 +48,7 @@
 				vec3 _ScanColor1 = vec3(_ScanColor);//不赋值给_ScanColor1 变量 直接使用_ScanColor1变量会保存???
 				if (depth < time && depth > (time - _ScanWidth) && depth < 1.0)
 				{
-				    float diff = 1.0 - (time - depth) / (_ScanWidth);//透明度[0-1];
+				    float diff = 1.0 - (time - depth) / (_ScanWidth);//扫描网透明度设置为[0-1]渐变;
 				    _ScanColor1 *= diff;
 				    gl_FragColor = vec4(vec3(s+_ScanColor1),1.0);
 				}else{
