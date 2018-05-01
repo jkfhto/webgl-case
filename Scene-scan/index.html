@@ -34,7 +34,7 @@
 			    return (2.0 * near * far) / (far + near - z * (far - near));
 			}
 
-			float readDepth (float fragCoordZ,float cameraNear,float cameraFar) {
+			float readDepth (float fragCoordZ,float cameraNear,float cameraFar) {//将深度从非线性转为线性表示
 				// float fragCoordZ = texture2D(depthSampler, coord).x;
 				float viewZ = perspectiveDepthToViewZ( fragCoordZ, cameraNear, cameraFar );
 				return viewZToOrthographicDepth( viewZ, cameraNear, cameraFar );
