@@ -25,6 +25,7 @@
 			}
 		</script>
 	    <script id="fragmentShader" type="x-shader/x-fragment">
+            #include <packing>//引用packing文件
 
 			float LinearizeDepth(float depth, float near, float far)//将屏幕空间中非线性的深度值变换至线性深度值
 			{
@@ -32,6 +33,13 @@
 			    // return z;
 			    return (2.0 * near * far) / (far + near - z * (far - near));
 			}
+
+			float readDepth (float fragCoordZ,float cameraNear,float cameraFar) {
+				// float fragCoordZ = texture2D(depthSampler, coord).x;
+				float viewZ = perspectiveDepthToViewZ( fragCoordZ, cameraNear, cameraFar );
+				return viewZToOrthographicDepth( viewZ, cameraNear, cameraFar );
+			}
+
             varying vec2 vUv;
             uniform sampler2D texture1;
             uniform float time;
@@ -43,10 +51,11 @@
 			void main()
 			{
 				vec3 s = texture2D( texture1, vUv ).xyz;
-				float depth = LinearizeDepth(gl_FragCoord.z,near,far) / far; // 将深度转到线性空间[0-1],默认是非线性的接近1.0
+				// float depth = LinearizeDepth(gl_FragCoord.z,near,far) / far; // 将深度转到线性空间[0-1],默认是非线性的接近1.0
 				// float _ScanWidth =0.05;
+				float depth = readDepth(gl_FragCoord.z,near,far);// 将深度转到线性空间[0-1],默认是非线性的接近1.0 使用THREE内置方法实现
 				vec3 _ScanColor1 = vec3(_ScanColor);//不赋值给_ScanColor1 变量 直接使用_ScanColor1变量会保存???
-				if (depth < time && depth > (time - _ScanWidth) && depth < 1.0)
+				if (depth < time && depth > (time - _ScanWidth) && depth < 1.0)//扫描网
 				{
 				    float diff = 1.0 - (time - depth) / (_ScanWidth);//扫描网透明度设置为[0-1]渐变;
 				    _ScanColor1 *= diff;
@@ -64,6 +73,7 @@
 		<script src="js/OBJLoader.js"></script>
         <script type="text/javascript" src="../js/dat.gui.min.js"></script>
 		<script src="../js/OrbitControls.js"></script>
+		<script src="../js/stats.min.js"></script>
         <script type="text/javascript" src="js/main.js"></script>
 
 	</body>
