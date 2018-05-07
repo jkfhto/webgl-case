@@ -38,14 +38,15 @@ var X_ray = function(){
 
 	}
 
-	var onProgress = function ( xhr ) {
+	function onProgress ( xhr ) {
 			if ( xhr.lengthComputable ) {
 				var percentComplete = xhr.loaded / xhr.total * 100;
+				document.getElementById("load_inf").innerHTML="模型正在加载中"+percentComplete+ '%';
 				console.log( Math.round(percentComplete, 2) + '% downloaded' );
 			}
 		};
 
-	var onError = function ( xhr ) { console.log(xhr)};
+	function onError( xhr ) { console.log(xhr)};
 
 	this.load_Fence = function () {
 		var scope = this;

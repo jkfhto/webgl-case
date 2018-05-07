@@ -12,10 +12,19 @@
 				margin: 0px;
 				overflow: hidden;
 			}
+			#load_inf{
+				position: absolute;
+			    color: red;
+			    text-align: center;
+			    font-size: 20px;
+			    width: 100%;
+			    margin-top: 10px;
+			}
 		</style>
 	</head>
 
 	<body>
+		<div id="load_inf">模型正在加载中..</div>
 		<script id="vertexShader" type="x-shader/x-vertex">
 			varying vec2 vUv;
 			varying vec3 vnormal;
