@@ -39,9 +39,13 @@ var X_ray = function(){
 	}
 
 	function onProgress ( xhr ) {
+		    var _div = document.getElementById("load_inf");
 			if ( xhr.lengthComputable ) {
 				var percentComplete = xhr.loaded / xhr.total * 100;
-				document.getElementById("load_inf").innerHTML="模型正在加载中"+percentComplete+ '%';
+				    _div.innerHTML="模型正在加载中"+percentComplete+ '%';
+				if(percentComplete == 100){
+					_div.style.display='none';
+				}
 				console.log( Math.round(percentComplete, 2) + '% downloaded' );
 			}
 		};
