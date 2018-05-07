@@ -111,8 +111,9 @@ var X_ray = function(){
 	                        child.renderOrder = 10;//修改对象的renderOrder 默认会开启渲染排序 renderOrder不同 则按照renderOrder的升序排序 先渲染renderOrder比较小的Mesh对象
 	                        num--;
 						    child.material.depthFunc = THREE.GreaterEqualDepth;
-						// child.material.depthTest = false;
-						   child.material.depthWrite = false;
+						//  child.material.depthTest = false;
+						    child.material.depthWrite = false;
+						    // renderer.state.setCullFace(THREE.CullFaceFront);//开启剔除正面功能 
 
 					}
 
