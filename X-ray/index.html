@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - glTF loader</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script id="vertexShader" type="x-shader/x-vertex">
+			varying vec2 vUv;
+			varying vec3 vnormal;
+			varying vec3 vposition_view;
+			uniform mat3 _normalMatrix;
+			void main()
+			{
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0);
+				vUv = uv;
+				vnormal = _normalMatrix * normal;//normalMatrix:THREE中跟模型视图矩阵有关 _normalMatrix:自定义的法线矩阵 只与模型矩阵相关
+				vec4 po = modelMatrix * vec4( position, 1.0);
+				vposition_view = po.xyz/po.w;
+			}
+		</script>
+	    <script id="fragmentShader" type="x-shader/x-fragment">
+            varying vec3 vnormal;
+            varying vec3 vposition_view;
+
+			void main()
+			{
+                vec3 viewDir = normalize(cameraPosition-vposition_view);
+				if(abs(dot(vnormal, viewDir))<0.4){
+                    gl_FragColor = vec4(1.0,0.0,0.0,1.0);//描边
+				}
+			}
+	    </script>
+		<script src="../js/three.js"></script>
+
+		<script src="../js/OrbitControls.js"></script>
+		<script src="../js/loaders/GLTFLoader.js"></script>
+		<script src="../js/loaders/DDSLoader.js"></script>
+		<script src="../js/loaders/MTLLoader.js"></script>
+		<script src="../js/loaders/OBJLoader.js"></script>
+
+		<script src="../js/Detector.js"></script>
+		<script src="../js/stats.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+
+	</body>
+</html>

@@ -10,6 +10,8 @@ var Scene_scan = function(){
 		camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, near, far );
 		camera.position.y = 335;
 		camera.position.z = 720;
+		stats = new Stats();
+		document.body.appendChild(stats.dom);
 		// scene
 		scene = new THREE.Scene();
 		var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
@@ -55,6 +57,7 @@ var Scene_scan = function(){
 	        vertexShader: document.getElementById('vertexShader').textContent,
 	        fragmentShader: document.getElementById('fragmentShader').textContent
 	    });
+	    ShaderMaterial.transparent = true;//关键代码 开启混合 实现半透明效果
 		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 		var mtlLoader = new THREE.MTLLoader();
 		mtlLoader.setPath( 'mountain/' );
@@ -98,6 +101,7 @@ var Scene_scan = function(){
 		var looptime = 20 * 100;//设置速度
 		var t = ( time % looptime ) / looptime;//限制在[0,1]范围
 		uniforms.time.value = t;
+		stats.update();
 		renderer.render( scene, camera );
 	};
 

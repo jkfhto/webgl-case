@@ -9,5 +9,6 @@ var files = {
 		"国家选中高亮_Country-Select-Highlight/index",
 		"Photoshop_Photoshop/index",
 		"场景扫描_Scene-scan/index",
+		"透视效果_X-ray/index",
 	]
 };
