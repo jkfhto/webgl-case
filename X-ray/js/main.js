@@ -70,7 +70,6 @@ var X_ray = function(){
 
 		var mtlLoader = new THREE.MTLLoader();
 		mtlLoader.setPath( 'css/male02/' );
-		var num =100;
 		uniforms = {
 	    texture1:   { value: null },
 		    time: {
@@ -109,7 +108,6 @@ var X_ray = function(){
 						    _object.add(_mesh);
 						    child.material = ShaderMaterial;
 	                        child.renderOrder = 10;//修改对象的renderOrder 默认会开启渲染排序 renderOrder不同 则按照renderOrder的升序排序 先渲染renderOrder比较小的Mesh对象
-	                        num--;
 						    child.material.depthFunc = THREE.GreaterEqualDepth;
 						//  child.material.depthTest = false;
 						    child.material.depthWrite = false;
@@ -121,15 +119,15 @@ var X_ray = function(){
 				object.position.y = - 100;
 				object.position.z = - 100;
 				// object.material.depthFunc = THREE.GreaterEqualDepth;
-				// scene.add( object );
+				scene.add( object );
 				_object.traverse( function ( child ) {
 
 					if ( child.isMesh ) {
 						   //  var _mesh = new THREE.Mesh(child.geometry.clone(),child.material.clone())
 						   // _object.add(_mesh);
 	                        child.renderOrder = 20;//先渲染透视效果  再渲染正常部分 不然未遮挡的部分 透视效果的深度会与正常绘制的深度冲突 导致正常绘制的也会参数描边效果
-						    child.material.depthFunc = THREE.LessEqualDepth;
-						    child.material.depthWrite = true;
+						    // child.material.depthFunc = THREE.LessEqualDepth;
+						    // child.material.depthWrite = true;
 
 					}
 
