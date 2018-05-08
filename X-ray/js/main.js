@@ -121,7 +121,7 @@ var X_ray = function(){
 				object.position.y = - 100;
 				object.position.z = - 100;
 				// object.material.depthFunc = THREE.GreaterEqualDepth;
-				scene.add( object );
+				// scene.add( object );
 				_object.traverse( function ( child ) {
 
 					if ( child.isMesh ) {
@@ -129,6 +129,7 @@ var X_ray = function(){
 						   // _object.add(_mesh);
 	                        child.renderOrder = 20;//先渲染透视效果  再渲染正常部分 不然未遮挡的部分 透视效果的深度会与正常绘制的深度冲突 导致正常绘制的也会参数描边效果
 						    child.material.depthFunc = THREE.LessEqualDepth;
+						    child.material.depthWrite = true;
 
 					}
 
