@@ -177,6 +177,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 			position.copy( scope.target ).add( offset );
 
 			scope.object.lookAt( scope.target );
+			// console.log(scope.target);
 
 			if ( scope.enableDamping === true ) {
 
