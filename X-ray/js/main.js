@@ -48,7 +48,7 @@ var X_ray = function(){
 				}
 				console.log( Math.round(percentComplete, 2) + '% downloaded' );
 			}
-		};
+	};
 
 	function onError( xhr ) { console.log(xhr)};
 
