@@ -10,5 +10,6 @@ var files = {
 		"Photoshop_Photoshop/index",
 		"场景扫描_Scene-scan/index",
 		"透视效果_X-ray/index",
+		"素描效果_sketch-rendering/index",
 	]
 };
