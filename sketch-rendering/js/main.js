@@ -76,7 +76,12 @@ var Sketch_render = function(){
 				// var material = materials[ 0 ];
 				var object = new THREE.Mesh( geometry, sketchShaderMaterial);
 				object.position.y = -8;
+				var vertexNormalsHelper = new THREE.VertexNormalsHelper( object, 1 );
+				// object.add( vertexNormalsHelper );
+				var faceNormalsHelper = new THREE.FaceNormalsHelper( object, 1 );
+				// object.add( faceNormalsHelper );
 				scene.add( object );
+
 			},
 
 			// onProgress callback
@@ -136,7 +141,7 @@ var Sketch_render = function(){
 	    var  composeShaderMaterial = new THREE.ShaderMaterial({
 	        uniforms: composeUniforms,
 	        vertexShader: document.getElementById('outline-vert').textContent,
-	        fragmentShader: document.getElementById('outline-frag').textContent
+	        fragmentShader: document.getElementById('outline-frag2').textContent
 	    });
 		var composeMaterial = new THREE.MeshBasicMaterial({
 	        map: depthFbo.texture
@@ -144,7 +149,7 @@ var Sketch_render = function(){
 		composePlaneMesh = new THREE.Mesh(composePlaneGeometry, composeShaderMaterial);
 		composeScene.add(composePlaneMesh);
 
-		renderer = new THREE.WebGLRenderer();
+		renderer = new THREE.WebGLRenderer({antialias:true});
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		container.appendChild( renderer.domElement );
