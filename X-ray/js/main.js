@@ -111,6 +111,7 @@ var X_ray = function(){
 						    child.material.depthFunc = THREE.GreaterEqualDepth;
 						//  child.material.depthTest = false;
 						    child.material.depthWrite = false;
+						    child.material.transparent = true;
 						    // renderer.state.setCullFace(THREE.CullFaceFront);//开启剔除正面功能 
 
 					}
@@ -125,6 +126,7 @@ var X_ray = function(){
 					if ( child.isMesh ) {
 						   //  var _mesh = new THREE.Mesh(child.geometry.clone(),child.material.clone())
 						   // _object.add(_mesh);
+						    child.material.transparent = true;
 	                        child.renderOrder = 20;//先渲染透视效果  再渲染正常部分 不然未遮挡的部分 透视效果的深度会与正常绘制的深度冲突 导致正常绘制的也会参数描边效果
 						    // child.material.depthFunc = THREE.LessEqualDepth;
 						    // child.material.depthWrite = true;

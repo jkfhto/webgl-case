@@ -46,11 +46,13 @@
 			void main()
 			{
                 vec3 viewDir = normalize(cameraPosition-vposition_view);
-				if(abs(dot(vnormal, viewDir))<0.4){
-                    gl_FragColor = vec4(1.0,0.0,0.0,1.0);//描边
-				}else{
-					gl_FragColor = vec4(0.0,0.0,0.0,1.0);
-				}
+                float edge = 1.0-abs(dot(vnormal, viewDir));
+				//if(abs(dot(vnormal, viewDir))<0.4){
+                //    gl_FragColor = vec4(1.0-abs(dot(vnormal, viewDir)),0.0,0.0,1.0);//描边
+				//}else{
+				//	gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+				//}
+				gl_FragColor = vec4(edge,edge,0.0,0.6);//使用渐变描边描边
 			}
 	    </script>
 		<script src="../js/three.js"></script>
