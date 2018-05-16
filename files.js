@@ -11,5 +11,6 @@ var files = {
 		"场景扫描_Scene-scan/index",
 		"透视效果_X-ray/index",
 		"素描效果_sketch-rendering/index",
+		"溶解效果_Dissolving/index",
 	]
 };
