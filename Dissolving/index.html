@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>消融效果</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#info {
+				color: #fff;
+				position: absolute;
+				top: 10px;
+				width: 100%;
+				text-align: center;
+				z-index: 100;
+				display:block;
+			}
+			#info a, .button { color: #f00; font-weight: bold; text-decoration: underline; cursor: pointer }
+		</style>
+	</head>
+
+	<body>
+		<script id="vertexShader" type="x-shader/x-vertex">
+			varying vec2 vUv;
+			void main()
+			{
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0);
+				vUv = uv;
+			}
+		</script>
+	    <script id="fragmentShader" type="x-shader/x-fragment">
+            #include <packing>//引用packing文件
+
+			float readDepth (float fragCoordZ,float cameraNear,float cameraFar) {//将深度从非线性转为线性表示
+				// float fragCoordZ = texture2D(depthSampler, coord).x;
+				float viewZ = perspectiveDepthToViewZ( fragCoordZ, cameraNear, cameraFar );
+				return viewZToOrthographicDepth( viewZ, cameraNear, cameraFar );
+			}
+
+            varying vec2 vUv;
+            uniform sampler2D texture1;
+            uniform sampler2D noiseTexture;
+            uniform float time;
+            uniform vec2 uResolution;
+            uniform float pdnum;
+            uniform vec3 DissolvingColor;
+
+			void main()
+			{
+				vec2 uv = gl_FragCoord.xy / uResolution.xy;
+				vec3 s = texture2D( texture1, vUv ).rgb;
+				vec3 noise = texture2D( noiseTexture, vUv ).rgb;
+				float color = clamp(noise.r,0.0,1.0);
+				if(color <= time - 0.08 ) discard;//根据噪声纹理采样  实现进行消融 注意time值大于等于1.08
+				if(color <= time - 0.04){//描边  描边的范围大于消融的范围
+				    float edge = (color - (time - 0.08))/(0.08 - 0.04);//渐变效果
+                    gl_FragColor = vec4(DissolvingColor,1.0);
+			    }else{
+                    gl_FragColor = vec4(s,1.0);
+			    }
+			}
+	    </script>
+
+		<script src="../js/three.js"></script>
+		<script src="../js/OrbitControls.js"></script>
+		<script type="text/javascript" src="../js/dat.gui.min.js"></script>
+
+		<script src="../js/loaders/DDSLoader.js"></script>
+		<script src="../js/loaders/MTLLoader.js"></script>
+		<script src="../js/loaders/OBJLoader.js"></script>
+
+		<script src="../js/Detector.js"></script>
+		<script src="../js/stats.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+	</body>
+</html>
