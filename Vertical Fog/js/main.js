@@ -1,7 +1,7 @@
 var VerticalFog = function(){
 	var container, stats;
 
-	var camera11, scene, renderer, controls, uniforms, _mainobj;
+	var camera, scene, renderer, controls, uniforms, _mainobj;
 
 	var mouseX = 0, mouseY = 0;
 
@@ -10,6 +10,8 @@ var VerticalFog = function(){
 	var depthFbo, materialDepth, composeFbo;
 	var cameraNear=1.0, cameraFar = 50.0;
 	var composeCamera, composeScene ,composeUniforms;
+	var isRun = true;
+	var timeNUM=0;
 
 	this.init= function(){
 
@@ -88,6 +90,13 @@ var VerticalFog = function(){
 			texture: {
 				value: composeFbo.texture,
 			},
+			noiseTexture:   {
+				value: new THREE.TextureLoader().load( 'css/noise1.png' ),
+			},
+			time: {
+				type: "f",
+				value: 0.0
+			},
 			fogColor:{
 				type :"v3",
 				value: new THREE.Vector3(1,1,1),
@@ -98,8 +107,16 @@ var VerticalFog = function(){
 			},
 			depthMin:{
 				type: "f",
-				value: 0.0,
-			}
+				value: 0.3,
+			},
+			_fogDensity:{
+				type: "f",
+				value: 1.0,
+			},
+			noiseAmount:{
+				type: "f",
+				value: 1.0,
+			},
 	    };
 	    var  composeShaderMaterial = new THREE.ShaderMaterial({
 	        uniforms: composeUniforms,
@@ -172,6 +189,12 @@ var VerticalFog = function(){
 	}
 
 	function render() {
+		if(isRun){
+			var time = timeNUM++;
+			// var time = ( 1 + Math.sin( 2 * clock.getElapsedTime() / Math.PI ) ) / 2;//t取值：0-1
+			time = Math.sin(( time % 1000 ) / 1000*Math.PI*2);//限制在0-1-0范围
+			composeUniforms.time.value = time ;
+		}
 		scene.overrideMaterial = materialDepth;
 		renderer.render( scene, camera, depthFbo, true );//使用指定材质渲染场景到帧缓存 得到场景中的物体关于世界坐标y轴的贴图
 		scene.overrideMaterial = null;//正常绘制
@@ -186,11 +209,18 @@ var VerticalFog = function(){
 	this.addGui = function(){
     	var scope = this;
 		var API = {
+			        '开启云雾飘动'    	: true,
 					'雾化颜色'    	: [255, 255, 255],
-					'深度最大值'    	: 2.1,
-					'深度最小值'    	: 0.0,
+					'深度最大值'    	: 3.6,
+					'深度最小值'    	: 0.3,
+					'雾的浓度'   : 1.0,
+					'noiseAmount'   : 1.0,
 				};
 		var gui = new dat.GUI();
+
+		gui.add( API, '开启云雾飘动' ).onChange( function(val) {
+			    isRun = val;
+		} );
 
 		gui.addColor( API, '雾化颜色' ).onChange( function(val) {
 			    composeUniforms.fogColor.value.x = composeUniforms.fogColor.value.x = val[0]/255;//转到着色器数值范围[0-1]
@@ -205,6 +235,14 @@ var VerticalFog = function(){
 		gui.add( API, '深度最小值', 0.0, 2, 0.1 ).onChange( function(val) {
 				composeUniforms.depthMin.value = val;
 		} );
+
+		// gui.add( API, '雾的浓度', 0, 1, 0.1 ).onChange( function(val) {
+		// 		composeUniforms._fogDensity.value = val;
+		// } );
+
+		// gui.add( API, 'noiseAmount', 0, 1, 0.1 ).onChange( function(val) {
+		// 		composeUniforms.noiseAmount.value = val;
+		// } );
 
 	}
 }

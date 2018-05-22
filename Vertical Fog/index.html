@@ -66,18 +66,28 @@
 
 			varying vec2 vUv;
 			uniform sampler2D texture;
+			uniform sampler2D noiseTexture;//基于噪音贴图实现动画效果
 			uniform sampler2D depthtexture;
+			uniform float time;
 			uniform float cameraNear;
 			uniform vec3 fogColor;
 			uniform float depthMax;
 			uniform float depthMin;
+			uniform float _fogDensity;
+			uniform float noiseAmount;
 
 			void main() {
 			    float _FogEnd = 1.0;
 			    float _FogStart = 0.0;
+			    float fogXspeed = 0.0;
+			    float fogYspeed = 0.1;
+                vec2  speed = vUv+time*vec2(fogXspeed,fogYspeed);
+                float noise = texture2D(noiseTexture, speed).r;//更新uv实现动画
 				vec3 depthColor = texture2D(depthtexture, vUv).rgb;
 				float fogDensity = (depthColor.x*5.0 - depthMin) / (depthMax - depthMin);//depthColor.x*5.0深度还原
-				fogDensity = clamp(fogDensity,0.0,1.0);
+				//fogDensity*=noise;
+				fogDensity = smoothstep (0.0,noise,fogDensity);
+				//fogDensity = clamp(fogDensity,0.0,1.0);
 				//if(fogDensity==0.0){//场景默认背景是黑色,设置一直阈值区分绘制的物体和背景
 				//   fogDensity=1.0;
 				//}
