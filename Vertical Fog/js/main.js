@@ -136,6 +136,8 @@ var VerticalFog = function(){
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		container.appendChild( renderer.domElement );
 		controls = new THREE.OrbitControls(camera,renderer.domElement);
+		controls.minPolarAngle = THREE.Math.degToRad(70);
+	    controls.maxPolarAngle = THREE.Math.degToRad(89);
 
 		document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
