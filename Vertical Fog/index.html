@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>高度雾效果</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#load_inf{
+				position: absolute;
+			    color: red;
+			    text-align: center;
+			    font-size: 20px;
+			    width: 100%;
+			    margin-top: 10px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!-- <div id="load_inf">模型正在加载中..</div> -->
+		<script id="depth-vert" type="x-shader/x-vertex">
+			varying vec2 vUv;
+            varying vec4 worldPosition;
+			void main() {
+				vUv = uv;
+				worldPosition = modelMatrix * vec4(position, 1.0);
+				gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+			}
+		</script>
+		<script id="depth-frag" type="x-shader/x-fragment">
+			#include <packing>
+
+			varying vec2 vUv;
+			uniform float cameraNear;
+			uniform float cameraFar;
+			varying vec4 worldPosition;
+
+			float readDepth (float fragCoordZ,float cameraNear,float cameraFar) {//将深度从非线性转为线性表示
+				float viewZ = perspectiveDepthToViewZ( fragCoordZ, cameraNear, cameraFar );
+				return viewZToOrthographicDepth( viewZ, cameraNear, cameraFar );
+			}
+
+			void main() {
+				float depth = readDepth(gl_FragCoord.z,cameraNear,cameraFar);
+				gl_FragColor.rgb = vec3(worldPosition.y/5.0);//根据世界坐标的y值实现垂直雾效 5.0:默认会将worldPosition.y直接裁剪到[0-1]范围 会丢失深度信息,除以5.0线性映射到[0-1]保留深度信息
+				gl_FragColor.a = 1.0;
+			}
+		</script>
+		<script id="compose-vert" type="x-shader/x-vertex">
+			varying vec2 vUv;
+
+			void main() {
+				vUv = uv;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+			}
+		</script>
+		<script id="compose-frag" type="x-shader/x-fragment">
+			#include <packing>
+
+			varying vec2 vUv;
+			uniform sampler2D texture;
+			uniform sampler2D depthtexture;
+			uniform float cameraNear;
+			uniform vec3 fogColor;
+			uniform float depthMax;
+			uniform float depthMin;
+
+			void main() {
+			    float _FogEnd = 1.0;
+			    float _FogStart = 0.0;
+				vec3 depthColor = texture2D(depthtexture, vUv).rgb;
+				float fogDensity = (depthColor.x*5.0 - depthMin) / (depthMax - depthMin);//depthColor.x*5.0深度还原
+				fogDensity = clamp(fogDensity,0.0,1.0);
+				//if(fogDensity==0.0){//场景默认背景是黑色,设置一直阈值区分绘制的物体和背景
+				//   fogDensity=1.0;
+				//}
+				vec3 normalColor = texture2D(texture, vUv).rgb;
+				vec3 totalColor = mix(fogColor,normalColor,fogDensity);
+				gl_FragColor.rgb = vec3(totalColor);
+				gl_FragColor.a = 1.0;
+			}
+		</script>
+		<script src="../js/three.js"></script>
+
+		<script src="../js/OrbitControls.js"></script>
+		<script src="../js/loaders/GLTFLoader.js"></script>
+		<script src="../js/loaders/DDSLoader.js"></script>
+		<script src="../js/loaders/MTLLoader.js"></script>
+		<script src="../js/loaders/OBJLoader.js"></script>
+        <script type="text/javascript" src="../js/dat.gui.min.js"></script>
+		<script src="../js/Detector.js"></script>
+		<script src="../js/stats.min.js"></script>
+        <script type="text/javascript" src="js/main.js"></script>
+
+	</body>
+</html>
