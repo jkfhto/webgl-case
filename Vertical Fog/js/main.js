@@ -22,8 +22,8 @@ var VerticalFog = function(){
 		// scene
 
 		scene = new THREE.Scene();
-		 var axes = new THREE.AxesHelper( 10);
-                scene.add(axes);
+		var axes = new THREE.AxesHelper( 10);
+        // scene.add(axes);
 
 		var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
 		scene.add( ambientLight );
