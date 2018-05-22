@@ -173,10 +173,10 @@ var VerticalFog = function(){
 
 	function render() {
 		scene.overrideMaterial = materialDepth;
-		renderer.render( scene, camera, depthFbo, true );//使用深度材质渲染场景到帧缓存 得到深度贴图
+		renderer.render( scene, camera, depthFbo, true );//使用指定材质渲染场景到帧缓存 得到场景中的物体关于世界坐标y轴的贴图
 		scene.overrideMaterial = null;//正常绘制
 		// renderer.render( scene, camera );
-		renderer.render( scene, camera, composeFbo, true );//渲染素描效果的场景到帧缓存
+		renderer.render( scene, camera, composeFbo, true );//正常渲染场景中的物体到帧缓存
 	    scene.overrideMaterial = null;
 		// renderer.render( scene, camera );
 		renderer.render( composeScene, composeCamera );
