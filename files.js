@@ -12,5 +12,6 @@ var files = {
 		"透视效果_X-ray/index",
 		"素描效果_sketch-rendering/index",
 		"溶解效果_Dissolving/index",
+		"高度雾效果_Vertical Fog/index",
 	]
 };
