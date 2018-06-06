@@ -2153,7 +2153,7 @@
 
 		},
 
-		setFromAxisAngle: function ( axis, angle ) {
+		setFromAxisAngle: function ( axis, angle ) {//绕任意轴设定旋转四元数 axis:单位旋转轴 angle:弧度
 
 			// http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
 
@@ -2172,11 +2172,11 @@
 
 		},
 
-		setFromRotationMatrix: function ( m ) {
+		setFromRotationMatrix: function ( m ) {//旋转矩阵转四元数
 
 			// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
 
-			// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+			// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled) // 确保参数m是一个3x3的旋转矩阵
 
 			var te = m.elements,
 
@@ -2225,13 +2225,13 @@
 
 			}
 
-			this.onChangeCallback();
+			this.onChangeCallback();//执行回调函数
 
-			return this;
+			return this;//返回新的四元数 
 
 		},
 
-		setFromUnitVectors: function () {
+		setFromUnitVectors: function () {//通过两个三维向量Vector3(vFrom,vTo)设置四元数
 
 			// assumes direction vectors vFrom and vTo are normalized
 
@@ -2271,7 +2271,7 @@
 				this._z = v1.z;
 				this._w = r;
 
-				return this.normalize();
+				return this.normalize();//返回归一化的四元数  
 
 			};
 
@@ -2378,7 +2378,7 @@
 
 		},
 
-		slerp: function ( qb, t ) {
+		slerp: function ( qb, t ) {//通过t值从当前四元数到qb之间进行球形插值
 
 			if ( t === 0 ) return this;
 			if ( t === 1 ) return this.copy( qb );
@@ -2437,9 +2437,9 @@
 			this._y = ( y * ratioA + this._y * ratioB );
 			this._z = ( z * ratioA + this._z * ratioB );
 
-			this.onChangeCallback();
+			this.onChangeCallback();//执行回调函数
 
-			return this;
+			return this;//返回插值的四元数
 
 		},
 
@@ -9301,15 +9301,15 @@
 
 		var scope = this;
 
-		this.enabled = false;
+		this.enabled = false;//设置渲染是否开启
 
 		this.autoUpdate = true;
 		this.needsUpdate = false;
 
-		this.type = PCFShadowMap;
+		this.type = PCFShadowMap;//阴影类型(影响抗锯齿)
 
-		this.renderReverseSided = true;
-		this.renderSingleSided = true;
+		this.renderReverseSided = true;//渲染反面
+		this.renderSingleSided = true;//渲染单面
 
 		this.render = function ( lights, scene, camera ) {
 
@@ -9319,14 +9319,14 @@
 			if ( lights.length === 0 ) return;
 
 			// TODO Clean up (needed in case of contextlost)
-			var _gl = _renderer.context;
+			var _gl = _renderer.context;//绘图上下文环境
 			var _state = _renderer.state;
 
 			// Set GL state for depth map.
-			_state.disable( _gl.BLEND );
+			_state.disable( _gl.BLEND );//禁用混合
 			_state.buffers.color.setClear( 1, 1, 1, 1 );
-			_state.buffers.depth.setTest( true );
-			_state.setScissorTest( false );
+			_state.buffers.depth.setTest( true );//开启深度测试
+			_state.setScissorTest( false );//禁用裁剪
 
 			// render depth map
 
@@ -9787,13 +9787,13 @@
 
 			if ( attribute.isInterleavedBufferAttribute ) attribute = attribute.data;
 
-			var data = buffers[ attribute.uuid ];
+			var data = buffers[ attribute.uuid ];//根据uuid获取指定的缓冲区关联对象
 
 			if ( data ) {
 
-				gl.deleteBuffer( data.buffer );//删除指定的缓冲区对象
+				gl.deleteBuffer( data.buffer );//删除指定的webgl缓冲区对象
 
-				delete buffers[ attribute.uuid ];//删除指定的缓冲区关联对象
+				delete buffers[ attribute.uuid ];//删除指定的webgl缓冲区关联对象
 
 			}
 
@@ -11959,7 +11959,7 @@
 
 		},
 
-		merge: function ( geometry, matrix, materialIndexOffset ) {
+		merge: function ( geometry, matrix, materialIndexOffset ) {//合并Geometry实现批处理 必须是使用同一材质的物体才能生效 减少draw call提高效率
 
 			if ( ! ( geometry && geometry.isGeometry ) ) {
 
@@ -11981,7 +11981,7 @@
 
 			if ( materialIndexOffset === undefined ) materialIndexOffset = 0;
 
-			if ( matrix !== undefined ) {
+			if ( matrix !== undefined ) {//更新需要合并的geometry对象的法线矩阵
 
 				normalMatrix = new Matrix3().getNormalMatrix( matrix );
 
@@ -11995,9 +11995,9 @@
 
 				var vertexCopy = vertex.clone();
 
-				if ( matrix !== undefined ) vertexCopy.applyMatrix4( matrix );
+				if ( matrix !== undefined ) vertexCopy.applyMatrix4( matrix );//更新顶点坐标
 
-				vertices1.push( vertexCopy );
+				vertices1.push( vertexCopy );//顶点法线合并
 
 			}
 
@@ -12005,7 +12005,7 @@
 
 			for ( var i = 0, il = colors2.length; i < il; i ++ ) {
 
-				colors1.push( colors2[ i ].clone() );
+				colors1.push( colors2[ i ].clone() );//顶点颜色合并
 
 			}
 
@@ -12014,13 +12014,13 @@
 			for ( i = 0, il = faces2.length; i < il; i ++ ) {
 
 				var face = faces2[ i ], faceCopy, normal, color,
-					faceVertexNormals = face.vertexNormals,
-					faceVertexColors = face.vertexColors;
+					faceVertexNormals = face.vertexNormals,//顶点法线
+					faceVertexColors = face.vertexColors;//顶点颜色
 
 				faceCopy = new Face3( face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset );
-				faceCopy.normal.copy( face.normal );
+				faceCopy.normal.copy( face.normal );//合并构成三角形平面的法线
 
-				if ( normalMatrix !== undefined ) {
+				if ( normalMatrix !== undefined ) {//更新三角面法线
 
 					faceCopy.normal.applyMatrix3( normalMatrix ).normalize();
 
@@ -12030,28 +12030,28 @@
 
 					normal = faceVertexNormals[ j ].clone();
 
-					if ( normalMatrix !== undefined ) {
+					if ( normalMatrix !== undefined ) {//更新顶点法线
 
 						normal.applyMatrix3( normalMatrix ).normalize();
 
 					}
 
-					faceCopy.vertexNormals.push( normal );
+					faceCopy.vertexNormals.push( normal );//合并构成三角形平面的顶点法线
 
 				}
 
-				faceCopy.color.copy( face.color );
+				faceCopy.color.copy( face.color );//合并三角形平面的颜色
 
 				for ( var j = 0, jl = faceVertexColors.length; j < jl; j ++ ) {
 
 					color = faceVertexColors[ j ];
-					faceCopy.vertexColors.push( color.clone() );
+					faceCopy.vertexColors.push( color.clone() );//合并构成三角形平面的顶点颜色
 
 				}
 
-				faceCopy.materialIndex = face.materialIndex + materialIndexOffset;
+				faceCopy.materialIndex = face.materialIndex + materialIndexOffset;//合并贴图索引
 
-				faces1.push( faceCopy );
+				faces1.push( faceCopy );//合并三角形平面
 
 			}
 
@@ -12073,7 +12073,7 @@
 
 				}
 
-				uvs1.push( uvCopy );
+				uvs1.push( uvCopy );//贴图的uv合并
 
 			}
 
@@ -16747,7 +16747,7 @@
 
 		}
 
-		function render( start, count ) {//绘图
+		function render( start, count ) {//根据索引缓存绘图
 
 			gl.drawElements( mode, count, type, start * bytesPerElement );
 
@@ -16805,7 +16805,7 @@
 
 		function render( start, count ) {
 
-			gl.drawArrays( mode, start, count );
+			gl.drawArrays( mode, start, count );//绘制图形
 
 			infoRender.calls ++;
 			infoRender.vertices += count;
@@ -17655,7 +17655,7 @@
 
 	function WebGLProgram( renderer, extensions, code, material, shader, parameters ) {//着色器程序对象
 
-		var gl = renderer.context;
+		var gl = renderer.context;//绘图上下文环境
 
 		var defines = material.defines;
 
@@ -18144,7 +18144,7 @@
 
 		var programs = [];//保存WebGLProgram对象
 
-		var shaderIDs = {
+		var shaderIDs = {//材质类型对象
 			MeshDepthMaterial: 'depth',
 			MeshDistanceMaterial: 'distanceRGBA',
 			MeshNormalMaterial: 'normal',
@@ -18344,7 +18344,7 @@
 
 		};
 
-		this.getProgramCode = function ( material, parameters ) {
+		this.getProgramCode = function ( material, parameters ) {//根据材质，参数配置着色器程序中需要使用的各种参数
 
 			var array = [];
 
@@ -18388,15 +18388,15 @@
 
 			var program;
 
-			// Check if code has been already compiled
+			// Check if code has been already compiled 检查代码是否已被编译
 			for ( var p = 0, pl = programs.length; p < pl; p ++ ) {
 
 				var programInfo = programs[ p ];
 
-				if ( programInfo.code === code ) {
+				if ( programInfo.code === code ) {//判断着色器代码是否相同
 
-					program = programInfo;
-					++ program.usedTimes;
+					program = programInfo;//直接返回已存在的WebGLProgram对象
+					++ program.usedTimes;//使用次数累加
 
 					break;
 
@@ -18417,14 +18417,14 @@
 
 		this.releaseProgram = function ( program ) {//删除WebGLProgram对象 并从数组中移除
 
-			if ( -- program.usedTimes === 0 ) {
+			if ( -- program.usedTimes === 0 ) {//多个对象使用同一个着色器程序 最后统一释放WebGLProgram 对象
 
-				// Remove from unordered set
+				// Remove from unordered set 从programs数组中移除指定的元素
 				var i = programs.indexOf( program );
 				programs[ i ] = programs[ programs.length - 1 ];
 				programs.pop();
 
-				// Free WebGL resources
+				// Free WebGL resources删除WebGLProgram 对象
 				program.destroy();
 
 			}
@@ -18533,7 +18533,7 @@
 
 			var texture = event.target;
 
-			texture.removeEventListener( 'dispose', onTextureDispose );
+			texture.removeEventListener( 'dispose', onTextureDispose );//移除纹理释放的方法
 
 			deallocateTexture( texture );
 
@@ -18564,7 +18564,7 @@
 
 				// cube texture
 
-				_gl.deleteTexture( textureProperties.__image__webglTextureCube );
+				_gl.deleteTexture( textureProperties.__image__webglTextureCube );//删除立方体纹理对象
 
 			} else {
 
@@ -18572,12 +18572,12 @@
 
 				if ( textureProperties.__webglInit === undefined ) return;
 
-				_gl.deleteTexture( textureProperties.__webglTexture );
+				_gl.deleteTexture( textureProperties.__webglTexture );//删除2d纹理对象
 
 			}
 
 			// remove all webgl properties
-			properties.remove( texture );
+			properties.remove( texture );//删除闭包中指定对象的属性
 
 		}
 
@@ -19300,8 +19300,8 @@
 
 					if ( currentColorMask !== colorMask && ! locked ) {
 
-						gl.colorMask( colorMask, colorMask, colorMask, colorMask );
-						currentColorMask = colorMask;
+						gl.colorMask( colorMask, colorMask, colorMask, colorMask );//设置在绘制或渲染WebGLFramebuffer时要开启或关闭的颜色分量。
+						currentColorMask = colorMask;//更新
 
 					}
 
@@ -19325,14 +19325,14 @@
 
 					if ( currentColorClear.equals( color ) === false ) {
 
-						gl.clearColor( r, g, b, a );
+						gl.clearColor( r, g, b, a );//设置清空颜色缓存时用的颜色值(canvas背景色)。
 						currentColorClear.copy( color );
 
 					}
 
 				},
 
-				reset: function () {
+				reset: function () {//重置颜色缓存区相关参数
 
 					locked = false;
 
@@ -19456,7 +19456,7 @@
 
 					if ( currentDepthClear !== depth ) {
 
-						gl.clearDepth( depth );
+						gl.clearDepth( depth );//设置清除深度缓存时的深度值。
 						currentDepthClear = depth;
 
 					}
@@ -19510,7 +19510,7 @@
 
 					if ( currentStencilMask !== stencilMask && ! locked ) {
 
-						gl.stencilMask( stencilMask );
+						gl.stencilMask( stencilMask );//设置模板缓冲区的写入掩码:当为false时禁止在Stencil Buffer中写入(默认0xff)
 						currentStencilMask = stencilMask;
 
 					}
@@ -19542,7 +19542,15 @@
 					     currentStencilZFail !== stencilZFail ||
 					     currentStencilZPass !== stencilZPass ) {
 
-						gl.stencilOp( stencilFail, stencilZFail, stencilZPass );
+						gl.stencilOp( stencilFail, stencilZFail, stencilZPass );//stencilFail模板测试未通过时该如何变化；stencilZFail表示模板测试通过，但深度测试未通过时该如何变化；stencilZPass表示模板测试和深度测试均通过或者未执行深度测试时该如何变化
+					    //参数GL_KEEP（不改变，这也是默认值）  
+					　　//gl.ZERO（回零）  
+					　　//gl.REPLACE（使用测试条件中的设定值来代替当前模板值）  
+					　　//gl.INCR（增加1，但如果已经是最大值，则保持不变），  
+					　　//gl.INCR_WRAP（增加1，但如果已经是最大值，则从零重新开始）  
+					　　//gl.DECR（减少1，但如果已经是零，则保持不变），  
+					　　//gl.DECR_WRAP（减少1，但如果已经是零，则重新设置为最大值）  
+					　　//gl.INVERT（按位取反） 
 
 						currentStencilFail = stencilFail;
 						currentStencilZFail = stencilZFail;
@@ -19562,7 +19570,7 @@
 
 					if ( currentStencilClear !== stencil ) {
 
-						gl.clearStencil( stencil );
+						gl.clearStencil( stencil );//设置清除模板缓冲区时的模板值。
 						currentStencilClear = stencil;
 
 					}
@@ -19658,14 +19666,14 @@
 
 		// init
 
-		colorBuffer.setClear( 0, 0, 0, 1 );
-		depthBuffer.setClear( 1 );
-		stencilBuffer.setClear( 0 );
+		colorBuffer.setClear( 0, 0, 0, 1 );//初始化颜色缓存区的颜色值
+		depthBuffer.setClear( 1 );//初始化深度缓存区的深度值
+		stencilBuffer.setClear( 0 );//初始化模板缓存区的模板值
 
 		enable( gl.DEPTH_TEST );//开启深度测试
 		depthBuffer.setFunc( LessEqualDepth );//设置深度测试函数 
 
-		setFlipSided( false );
+		setFlipSided( false );//设置按照逆时针方向构成的多边形为正面
 		setCullFace( CullFaceBack );//设置面剔除
 		enable( gl.CULL_FACE );//开启面剔除
 
@@ -19969,11 +19977,11 @@
 
 				if ( flipSided ) {
 
-					gl.frontFace( gl.CW );//设置顺时针构成的多边形为正面
+					gl.frontFace( gl.CW );//设置按照顺时针方向构成的多边形为正面
 
 				} else {
 
-					gl.frontFace( gl.CCW );//设置逆时针构成的多边形为正面
+					gl.frontFace( gl.CCW );//设置按照逆时针方向构成的多边形为正面
 
 				}
 
@@ -20247,15 +20255,15 @@
 
 		var maxAnisotropy;
 
-		function getMaxAnisotropy() {
+		function getMaxAnisotropy() {//各向异性过滤
 
-			if ( maxAnisotropy !== undefined ) return maxAnisotropy;
+			if ( maxAnisotropy !== undefined ) return maxAnisotropy;//已经存在直接返回
 
-			var extension = extensions.get( 'EXT_texture_filter_anisotropic' );
+			var extension = extensions.get( 'EXT_texture_filter_anisotropic' );//判断系统是不是支持各向异性过滤
 
 			if ( extension !== null ) {
 
-				maxAnisotropy = gl.getParameter( extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT );
+				maxAnisotropy = gl.getParameter( extension.MAX_TEXTURE_MAX_ANISOTROPY_EXT );//获取当前系统支持的最大各向异性过滤的数值并赋值
 
 			} else {
 
@@ -20263,11 +20271,11 @@
 
 			}
 
-			return maxAnisotropy;
+			return maxAnisotropy;//返回当前系统支持的最大各向异性过滤的数值
 
 		}
 
-		function getMaxPrecision( precision ) {
+		function getMaxPrecision( precision ) {//获取系统支持的精度值
 
 			if ( precision === 'highp' ) {
 
@@ -20297,33 +20305,33 @@
 
 		}
 
-		var precision = parameters.precision !== undefined ? parameters.precision : 'highp';
-		var maxPrecision = getMaxPrecision( precision );
+		var precision = parameters.precision !== undefined ? parameters.precision : 'highp';//默认highp高精度
+		var maxPrecision = getMaxPrecision( precision );//获取系统支持的精度值
 
-		if ( maxPrecision !== precision ) {
+		if ( maxPrecision !== precision ) {//适配传入的精度值和系统支持的精度值
 
 			console.warn( 'THREE.WebGLRenderer:', precision, 'not supported, using', maxPrecision, 'instead.' );
 			precision = maxPrecision;
 
 		}
 
-		var logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true;
+		var logarithmicDepthBuffer = parameters.logarithmicDepthBuffer === true;//逻辑深度缓存
 
-		var maxTextures = gl.getParameter( gl.MAX_TEXTURE_IMAGE_UNITS );
-		var maxVertexTextures = gl.getParameter( gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS );
-		var maxTextureSize = gl.getParameter( gl.MAX_TEXTURE_SIZE );
-		var maxCubemapSize = gl.getParameter( gl.MAX_CUBE_MAP_TEXTURE_SIZE );
+		var maxTextures = gl.getParameter( gl.MAX_TEXTURE_IMAGE_UNITS );//获取一个片段着色器上纹理单元的最大数量
+		var maxVertexTextures = gl.getParameter( gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS );//获取一个顶点着色器上纹理单元的最大数量
+		var maxTextureSize = gl.getParameter( gl.MAX_TEXTURE_SIZE );//获取纹理的最大尺寸
+		var maxCubemapSize = gl.getParameter( gl.MAX_CUBE_MAP_TEXTURE_SIZE );//获取立方体纹理的最大尺寸
 
-		var maxAttributes = gl.getParameter( gl.MAX_VERTEX_ATTRIBS );
-		var maxVertexUniforms = gl.getParameter( gl.MAX_VERTEX_UNIFORM_VECTORS );
-		var maxVaryings = gl.getParameter( gl.MAX_VARYING_VECTORS );
-		var maxFragmentUniforms = gl.getParameter( gl.MAX_FRAGMENT_UNIFORM_VECTORS );
+		var maxAttributes = gl.getParameter( gl.MAX_VERTEX_ATTRIBS );//顶点着色器attribute变量的最大数量
+		var maxVertexUniforms = gl.getParameter( gl.MAX_VERTEX_UNIFORM_VECTORS );//顶点着色器uniform变量的最大数量
+		var maxVaryings = gl.getParameter( gl.MAX_VARYING_VECTORS );//顶点着色器varying变量的最大数量
+		var maxFragmentUniforms = gl.getParameter( gl.MAX_FRAGMENT_UNIFORM_VECTORS );//片元着色器uniform变量的最大数量
 
 		var vertexTextures = maxVertexTextures > 0;
 		var floatFragmentTextures = !! extensions.get( 'OES_texture_float' );
 		var floatVertexTextures = vertexTextures && floatFragmentTextures;
 
-		return {
+		return {//返回一个包含硬件支持的各种参数的对象
 
 			getMaxAnisotropy: getMaxAnisotropy,
 			getMaxPrecision: getMaxPrecision,
@@ -21199,7 +21207,7 @@
 		var _canvas = parameters.canvas !== undefined ? parameters.canvas : document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' ),
 			_context = parameters.context !== undefined ? parameters.context : null,
 
-			_alpha = parameters.alpha !== undefined ? parameters.alpha : false,//设置为true 着色器中设置gl_FragColor透明度为0 帧缓存颜色才会透明 否则不会生效
+			_alpha = parameters.alpha !== undefined ? parameters.alpha : false,
 			_depth = parameters.depth !== undefined ? parameters.depth : true,
 			_stencil = parameters.stencil !== undefined ? parameters.stencil : true,
 			_antialias = parameters.antialias !== undefined ? parameters.antialias : false,
@@ -21228,7 +21236,7 @@
 
 		// scene graph
 
-		this.sortObjects = true;
+		this.sortObjects = true;//默认会对场景绘制的物体进行排序处理
 
 		// user-defined clipping
 
@@ -21382,8 +21390,8 @@
 
 			}
 
-			_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
-			_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
+			_canvas.addEventListener( 'webglcontextlost', onContextLost, false );//与WebGLRenderingContext对象关联的绘图缓冲区已丢失，则会触发WebGL API的webglcontextlost事件
+			_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );//与WebGLRenderingContext对象关联的绘图缓冲区已恢复，则会触发WebGL API的webglcontextrestored事件。
 
 		} catch ( error ) {
 
@@ -21426,17 +21434,17 @@
 			geometries = new WebGLGeometries( _gl, attributes, _infoMemory );//WebGLGeometries 管理场景中的几何体geometry的attributes等数据
 			objects = new WebGLObjects( geometries, _infoRender );
 			morphtargets = new WebGLMorphtargets( _gl );
-			programCache = new WebGLPrograms( _this, extensions, capabilities );
-			lights = new WebGLLights();
-			renderLists = new WebGLRenderLists();
+			programCache = new WebGLPrograms( _this, extensions, capabilities );//实例一个处理WebGLProgram相关操作的对象
+			lights = new WebGLLights();//实例一个处理场景光源的对象
+			renderLists = new WebGLRenderLists();//实例一个渲染列表对象
 
 			background = new WebGLBackground( _this, state, geometries, _premultipliedAlpha );
 
-			bufferRenderer = new WebGLBufferRenderer( _gl, extensions, _infoRender );
-			indexedBufferRenderer = new WebGLIndexedBufferRenderer( _gl, extensions, _infoRender );
+			bufferRenderer = new WebGLBufferRenderer( _gl, extensions, _infoRender );//使用一般缓存区绘图的对象
+			indexedBufferRenderer = new WebGLIndexedBufferRenderer( _gl, extensions, _infoRender );//使用索引缓存绘图的对象
 
-			flareRenderer = new WebGLFlareRenderer( _this, _gl, state, textures, capabilities );
-			spriteRenderer = new WebGLSpriteRenderer( _this, _gl, state, textures, capabilities );
+			flareRenderer = new WebGLFlareRenderer( _this, _gl, state, textures, capabilities );//镜头光晕使用自定义渲染器
+			spriteRenderer = new WebGLSpriteRenderer( _this, _gl, state, textures, capabilities );//精灵使用自定义渲染器
 
 			_this.info.programs = programCache.programs;
 
@@ -21465,13 +21473,13 @@
 
 		// API
 
-		this.getContext = function () {
+		this.getContext = function () {//获取绘图上下文环境
 
 			return _gl;
 
 		};
 
-		this.getContextAttributes = function () {
+		this.getContextAttributes = function () {//获取描述在此上下文中设置的属性的对象=>contextAttributes
 
 			return _gl.getContextAttributes();
 
@@ -21479,15 +21487,15 @@
 
 		this.forceContextLoss = function () {
 
-			var extension = extensions.get( 'WEBGL_lose_context' );
-			if ( extension ) extension.loseContext();
+			var extension = extensions.get( 'WEBGL_lose_context' );//模拟丢失和恢复WebGLRenderingContext的函数
+			if ( extension ) extension.loseContext();//模拟丢失的绘图上下文。
 
 		};
 
 		this.forceContextRestore = function () {
 
-			var extension = extensions.get( 'WEBGL_lose_context' );
-			if ( extension ) extension.restoreContext();
+			var extension = extensions.get( 'WEBGL_lose_context' );//模拟丢失和恢复WebGLRenderingContext的函数
+			if ( extension ) extension.restoreContext();//模拟恢复的绘图上下文。
 
 		};
 
@@ -21544,7 +21552,7 @@
 
 		};
 
-		this.getDrawingBufferSize = function () {//获取drawingbuffer的尺寸,这个表示画布中有多少个像素
+		this.getDrawingBufferSize = function () {//获取绘图缓存(drawingbuffer)的尺寸,这个表示画布中有多少个像素
 
 			return {
 				width: _width * _pixelRatio,
@@ -21567,21 +21575,21 @@
 
 		};
 
-		this.setViewport = function ( x, y, width, height ) {
+		this.setViewport = function ( x, y, width, height ) {//设置视口变换
 
 			_viewport.set( x, _height - y - height, width, height );
 			state.viewport( _currentViewport.copy( _viewport ).multiplyScalar( _pixelRatio ) );
 
 		};
 
-		this.setScissor = function ( x, y, width, height ) {
+		this.setScissor = function ( x, y, width, height ) {//设置裁剪变换
 
 			_scissor.set( x, _height - y - height, width, height );
 			state.scissor( _currentScissor.copy( _scissor ).multiplyScalar( _pixelRatio ) );
 
 		};
 
-		this.setScissorTest = function ( boolean ) {
+		this.setScissorTest = function ( boolean ) {//设置是否开启裁剪测试
 
 			state.setScissorTest( _scissorTest = boolean );
 
@@ -21627,19 +21635,19 @@
 
 		this.clearColor = function () {
 
-			this.clear( true, false, false );
+			this.clear( true, false, false );//清除颜色缓存区
 
 		};
 
 		this.clearDepth = function () {
 
-			this.clear( false, true, false );
+			this.clear( false, true, false );//清除深度缓存区
 
 		};
 
 		this.clearStencil = function () {
 
-			this.clear( false, false, true );
+			this.clear( false, false, true );//清除模板缓存区
 
 		};
 
@@ -21654,10 +21662,10 @@
 
 		this.dispose = function () {
 
-			_canvas.removeEventListener( 'webglcontextlost', onContextLost, false );
+			_canvas.removeEventListener( 'webglcontextlost', onContextLost, false );//移除绑定的相应事件
 			_canvas.removeEventListener( 'webglcontextrestored', onContextRestore, false );
 
-			renderLists.dispose();
+			renderLists.dispose();//renderLists对象重置 清空
 
 			vr.dispose();
 
@@ -21681,17 +21689,17 @@
 
 			_isContextLost = false;
 
-			initGLContext();
+			initGLContext();//一旦绘图上下文恢复后，绘图上下文丢失之前创建的WebGL资源（如纹理和缓冲区）不再有效。 您需要重新初始化WebGL应用程序的状态并重新创建资源。
 
 		}
 
-		function onMaterialDispose( event ) {
+		function onMaterialDispose( event ) {//材质释放
 
 			var material = event.target;
 
-			material.removeEventListener( 'dispose', onMaterialDispose );
+			material.removeEventListener( 'dispose', onMaterialDispose );//移除事件绑定
 
-			deallocateMaterial( material );
+			deallocateMaterial( material );//缓冲区释放
 
 		}
 
@@ -21708,7 +21716,7 @@
 
 		function releaseMaterialProgramReference( material ) {
 
-			var programInfo = properties.get( material ).program;
+			var programInfo = properties.get( material ).program;//获取与材质关联的着色器程序对象(管理着色器程序 顶点着色器 片元作色器等对象)
 
 			material.program = undefined;
 
@@ -22255,7 +22263,7 @@
 
 			if ( _clippingEnabled ) _clipping.beginShadows();
 
-			shadowMap.render( shadowsArray, scene, camera );
+			shadowMap.render( shadowsArray, scene, camera );//渲染光源
 
 			lights.setup( lightsArray, shadowsArray, camera );
 
@@ -22275,7 +22283,7 @@
 
 			}
 
-			this.setRenderTarget( renderTarget );//创建帧缓存对象 并进行相关设置
+			this.setRenderTarget( renderTarget );//创建帧缓存对象 并进行相关设置 将场景渲染到新建的帧缓存对象
 
 			//
 
@@ -22286,7 +22294,7 @@
 			var opaqueObjects = currentRenderList.opaque;//获取渲染列表中保存不透明对象的数组对象
 			var transparentObjects = currentRenderList.transparent;//获取渲染列表中保存透明对象的数组对象
 
-			if ( scene.overrideMaterial ) {//统一使用overrideMaterial材质渲染场景中的物体
+			if ( scene.overrideMaterial ) {//统一使用overrideMaterial材质渲染场景中的物体 场景中所有物体都会将深度值渲染到颜色缓存 深度值经过各种变换后 为非线性的 且接近于1 深度贴图接近白色
 
 				var overrideMaterial = scene.overrideMaterial;
 
@@ -22403,7 +22411,7 @@
 
 					lightsArray.push( object );//插入数组
 
-					if ( object.castShadow ) {
+					if ( object.castShadow ) {//存储产生阴影的光源到相应的数组中用于后续渲染
 
 						shadowsArray.push( object );//插入数组
 
@@ -22452,14 +22460,14 @@
 						var geometry = objects.update( object );//根据object的geometry对象,获取geometry对应的buffergeometry对象并创建了相关的缓冲区对象（position,uv,normal顶点坐标索引等）
 						var material = object.material;
 
-						if ( Array.isArray( material ) ) {
+						if ( Array.isArray( material ) ) {//材质是数组对象
 
 							var groups = geometry.groups;
 
 							for ( var i = 0, l = groups.length; i < l; i ++ ) {
 
-								var group = groups[ i ];
-								var groupMaterial = material[ group.materialIndex ];
+								var group = groups[ i ];//获取材质索引 绘制的起点 终点索引值
+								var groupMaterial = material[ group.materialIndex ];//获取材质
 
 								if ( groupMaterial && groupMaterial.visible ) {
 
@@ -22546,7 +22554,7 @@
 			object.onBeforeRender( _this, scene, camera, geometry, material, group );
 
 			object.modelViewMatrix.multiplyMatrices( camera.matrixWorldInverse, object.matrixWorld );//计算模型视图矩阵
-			object.normalMatrix.getNormalMatrix( object.modelViewMatrix );//计算法向量矩阵
+			object.normalMatrix.getNormalMatrix( object.modelViewMatrix );//计算法向量矩阵 跟模型视图矩阵有关
 
 			if ( object.isImmediateRenderObject ) {
 
@@ -31105,7 +31113,7 @@
 	 */
 
 	function SpotLightShadow() {
-
+        //继承LightShadow
 		LightShadow.call( this, new PerspectiveCamera( 50, 1, 0.5, 500 ) );
 
 	}
