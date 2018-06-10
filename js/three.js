@@ -22214,7 +22214,7 @@
 
 			}
 
-			if ( _isContextLost ) return;
+			if ( _isContextLost ) return;//与WebGLRenderingContext对象关联的绘图缓冲区已丢失 直接返回
 
 			// reset caching for this frame
 
@@ -22236,7 +22236,7 @@
 
 			}
 
-			_projScreenMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
+			_projScreenMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );//视图投影矩阵
 			_frustum.setFromMatrix( _projScreenMatrix );
 
 			lightsArray.length = 0;
