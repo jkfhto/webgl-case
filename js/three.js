@@ -8831,7 +8831,7 @@
 
 		setComponents: function ( x, y, z, w ) {
 
-			this.normal.set( x, y, z );
+			this.normal.set( x, y, z );//设置平面的法线
 			this.constant = w;
 
 			return this;
@@ -8902,7 +8902,7 @@
 
 		},
 
-		distanceToPoint: function ( point ) {
+		distanceToPoint: function ( point ) {//计算point与平面的有向距离
 
 			return this.normal.dot( point ) + this.constant;
 
@@ -9117,10 +9117,10 @@
 				var geometry = object.geometry;
 
 				if ( geometry.boundingSphere === null )
-					geometry.computeBoundingSphere();
+					geometry.computeBoundingSphere();//计算包围球
 
 				sphere.copy( geometry.boundingSphere )
-					.applyMatrix4( object.matrixWorld );
+					.applyMatrix4( object.matrixWorld );//获取包围球 并转换到世界坐标表示
 
 				return this.intersectsSphere( sphere );
 
@@ -9144,38 +9144,39 @@
 
 		}(),
 
-		intersectsSphere: function ( sphere ) {
+		intersectsSphere: function ( sphere ) {//计算包围球是否在视椎体内
 
 			var planes = this.planes;
 			var center = sphere.center;
 			var negRadius = - sphere.radius;
 
-			for ( var i = 0; i < 6; i ++ ) {
+			for ( var i = 0; i < 6; i ++ ) {//遍历判断
 
-				var distance = planes[ i ].distanceToPoint( center );
+				var distance = planes[ i ].distanceToPoint( center );//计算球心到平面的有向距离
 
-				if ( distance < negRadius ) {
+				if ( distance < negRadius ) {//1:如果包围球的球心到平面的有向距离为正数 条件不成立 在视椎体内
+				                             //2:如果包围球的球心到平面的有向距离为负数且小于negRadius(半径的负值)  则包围球位于平面的背面，在视椎体外 需要进行剔除 减少CPU向GPU发送的数据量 提高性能
 
-					return false;
+					return false;//不在视椎体内
 
 				}
 
 			}
 
-			return true;
+			return true;//在视椎体内
 
 		},
 
-		intersectsBox: function () {
+		intersectsBox: function () {//计算AABB(轴对齐包围盒)是否在视椎体内
 
-			var p1 = new Vector3(),
-				p2 = new Vector3();
+			var p1 = new Vector3(),//AABB点积最小的点
+				p2 = new Vector3();//AABB点积最大的点
 
 			return function intersectsBox( box ) {
 
 				var planes = this.planes;
 
-				for ( var i = 0; i < 6; i ++ ) {
+				for ( var i = 0; i < 6; i ++ ) {//遍历判断
 
 					var plane = planes[ i ];
 
@@ -9186,20 +9187,20 @@
 					p1.z = plane.normal.z > 0 ? box.min.z : box.max.z;
 					p2.z = plane.normal.z > 0 ? box.max.z : box.min.z;
 
-					var d1 = plane.distanceToPoint( p1 );
-					var d2 = plane.distanceToPoint( p2 );
+					var d1 = plane.distanceToPoint( p1 );//计算AABB点积最小的点 与平面plane的有向距离
+					var d2 = plane.distanceToPoint( p2 );//计算AABB点积最大的点 与平面plane的有向距离
 
 					// if both outside plane, no intersection
 
-					if ( d1 < 0 && d2 < 0 ) {
+					if ( d1 < 0 && d2 < 0 ) {//如果AABB点积最小的点，点积最大的点与平面plane的有向距离都小于0  则位于平面的背面不在视椎体内 需要剔除 
 
-						return false;
+						return false;//不在视椎体内
 
 					}
 
 				}
 
-				return true;
+				return true;//在视椎体内
 
 			};
 
@@ -21302,7 +21303,7 @@
 
 			// frustum
 
-			_frustum = new Frustum(),
+			_frustum = new Frustum(),//视锥
 
 			// clipping
 
@@ -22448,7 +22449,7 @@
 
 					}
 
-					if ( ! object.frustumCulled || _frustum.intersectsObject( object ) ) {//裁剪
+					if ( ! object.frustumCulled || _frustum.intersectsObject( object ) ) {//判断物体是否在视椎体内 object.frustumCulled:判断物体是否需要进行在视椎体内判断测试  通过判断可以减少向GPU发送的数据量 提高性能
 
 						if ( sortObjects ) {//计算深度值
 
