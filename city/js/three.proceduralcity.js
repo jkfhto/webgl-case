@@ -71,7 +71,7 @@ THREE.ProceduralCity	= function(renderer){
 
 	// generate the texture
 	var texture		= new THREE.Texture( generateTextureCanvas() );
-	texture.anisotropy	= renderer.capabilities.getMaxAnisotropy();
+	texture.anisotropy	= renderer.capabilities.getMaxAnisotropy();//查询当前系统支持的最大各向异性过滤的数值
 	texture.needsUpdate	= true;
 
 	// build the mesh
