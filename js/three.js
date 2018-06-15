@@ -21021,7 +21021,7 @@
 				if ( skipTransform !== true || dstArray === null ) {
 
 					var flatSize = dstOffset + nPlanes * 4,
-						viewMatrix = camera.matrixWorldInverse;
+						viewMatrix = camera.matrixWorldInverse;//视图矩阵
 
 					viewNormalMatrix.getNormalMatrix( viewMatrix );
 
@@ -22238,7 +22238,7 @@
 			}
 
 			_projScreenMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );//视图投影矩阵
-			_frustum.setFromMatrix( _projScreenMatrix );
+			_frustum.setFromMatrix( _projScreenMatrix );//根据视图投影矩阵 计算视椎体平面
 
 			lightsArray.length = 0;
 			shadowsArray.length = 0;
