@@ -11,7 +11,7 @@ var normalCity = function(){
 		document.body.appendChild( renderer.domElement );
 
 		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 3000)
-		camera.position.y	= 80
+		camera.position.y	= 80;
 
 		var light	= new THREE.HemisphereLight( 0xfffff0, 0x101020, 1.25 );
 		light.position.set( 0.75, 1, 0.25 );
