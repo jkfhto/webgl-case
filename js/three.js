@@ -12700,7 +12700,7 @@
 	 * @author mrdoob / http://mrdoob.com/
 	 */
 
-	function BufferAttribute( array, itemSize, normalized ) {
+	function BufferAttribute( array, itemSize, normalized ) {//此类存储与BufferGeometry关联的属性（如顶点位置，面指数，法线，颜色，UV和任何自定义属性）的数据，以便将数据更高效地传递到GPU
 
 		if ( Array.isArray( array ) ) {
 
@@ -12711,12 +12711,12 @@
 		this.uuid = _Math.generateUUID();
 		this.name = '';
 
-		this.array = array;
+		this.array = array;//必须是TypedArray,用于实例化缓冲区
 		this.itemSize = itemSize;
 		this.count = array !== undefined ? array.length / itemSize : 0;
 		this.normalized = normalized === true;
 
-		this.dynamic = false;
+		this.dynamic = false;//缓冲区是否动态。默认为false。如果为false，则GPU将被通知缓冲区的内容可能会经常使用，而且不会经常更改。这对应于 gl.STATIC_DRAW标志。如果为true，则GPU通知缓冲区的内容可能经常使用并经常改变。这对应于 gl.DYNAMIC_DRAW标志。
 		this.updateRange = { offset: 0, count: - 1 };
 
 		this.onUploadCallback = function () {};
@@ -30157,13 +30157,13 @@
 	 * @author mrdoob / http://mrdoob.com/
 	 */
 
-	var Cache = {
+	var Cache = {//一个简单的缓存系统，由FileLoader内部使用
 
-		enabled: false,
+		enabled: false,//是否启用缓存。默认为false
 
-		files: {},
+		files: {},//一个保存缓存文件的对象
 
-		add: function ( key, file ) {
+		add: function ( key, file ) {//使用key添加缓存项以引用文件。如果这个key已经包含一个文件，它将被覆盖
 
 			if ( this.enabled === false ) return;
 
@@ -30173,7 +30173,7 @@
 
 		},
 
-		get: function ( key ) {
+		get: function ( key ) {//获取key对应的属性值。如果该key属性不存在则返回undefined
 
 			if ( this.enabled === false ) return;
 
@@ -30183,13 +30183,13 @@
 
 		},
 
-		remove: function ( key ) {
+		remove: function ( key ) {//删除与key关联的缓存文件
 
 			delete this.files[ key ];
 
 		},
 
-		clear: function () {
+		clear: function () {//从缓存中删除所有值
 
 			this.files = {};
 
@@ -30288,7 +30288,7 @@
 
 			var scope = this;
 
-			var cached = Cache.get( url );
+			var cached = Cache.get( url );//获取缓存文件
 
 			if ( cached !== undefined ) {
 
@@ -30308,9 +30308,9 @@
 
 			// Check for data: URI
 			var dataUriRegex = /^data:(.*?)(;base64)?,(.*)$/;
-			var dataUriRegexResult = url.match( dataUriRegex );
+			var dataUriRegexResult = url.match( dataUriRegex );//匹配Data URIs数据
 
-			// Safari can not handle Data URIs through XMLHttpRequest so process manually
+			// Safari can not handle Data URIs through XMLHttpRequest so process manually Safari无法通过XMLHttpRequest处理Data URIs数据，因此需要手动处理
 			if ( dataUriRegexResult ) {
 
 				var mimeType = dataUriRegexResult[ 1 ];
@@ -30398,28 +30398,28 @@
 			} else {
 
 				var request = new XMLHttpRequest();
-				request.open( 'GET', url, true );
+				request.open( 'GET', url, true );//初始化 HTTP 请求参数，例如 URL 和 HTTP 方法，但是并不发送请求。true:代表异步请求
 
 				request.addEventListener( 'load', function ( event ) {
 
-					var response = event.target.response;
+					var response = event.target.response;//获取响应主体内容
 
-					Cache.add( url, response );
+					Cache.add( url, response );//将数据保存在内置的缓存系统中
 
 					if ( this.status === 200 ) {
 
-						if ( onLoad ) onLoad( response );
+						if ( onLoad ) onLoad( response );//执行资源加载成功的回调函数
 
 						scope.manager.itemEnd( url );
 
-					} else if ( this.status === 0 ) {
+					} else if ( this.status === 0 ) {//资源加载成功 某些浏览器在使用非http协议时,资源加载成功会返回状态0，例如 'file：//'或'data：//'
 
 						// Some browsers return HTTP Status 0 when using non-http protocol
 						// e.g. 'file://' or 'data://'. Handle as success.
 
 						console.warn( 'THREE.FileLoader: HTTP Status 0 received.' );
 
-						if ( onLoad ) onLoad( response );
+						if ( onLoad ) onLoad( response );//执行资源加载成功的回调函数
 
 						scope.manager.itemEnd( url );
 
@@ -30438,7 +30438,7 @@
 
 					request.addEventListener( 'progress', function ( event ) {
 
-						onProgress( event );
+						onProgress( event );//执行加载进度的函数
 
 					}, false );
 
@@ -30446,7 +30446,7 @@
 
 				request.addEventListener( 'error', function ( event ) {
 
-					if ( onError ) onError( event );
+					if ( onError ) onError( event );//执行加载错误的函数
 
 					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
@@ -30464,7 +30464,7 @@
 
 				}
 
-				request.send( null );
+				request.send( null );//发送 HTTP 请求，使用传递给 open() 方法的参数，null:可选请求体
 
 			}
 
@@ -30481,7 +30481,7 @@
 
 		},
 
-		setResponseType: function ( value ) {
+		setResponseType: function ( value ) {//设置响应类型  会影响响应主体返回值的类型
 
 			this.responseType = value;
 			return this;
