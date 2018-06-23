@@ -37,16 +37,16 @@ var VerticalFog = function(){
         light = new THREE.HemisphereLight( 0xbbbbff, 0x444422 );
 		light.position.set( 0, 1, 0 );
 		
-		// Configure decoder and create loader.
+		// Configure decoder and create loader. 配置解码器并创建加载器
 	    THREE.DRACOLoader.setDecoderPath( '../draco/' );
 	    var dracoLoader = new THREE.DRACOLoader();
 
-	    // (Optional) Pre-fetch decoder source files.
-	    THREE.DRACOLoader.getDecoderModule();
+	    // (Optional) Pre-fetch decoder source files.  预取解码器源文件
+	    // THREE.DRACOLoader.getDecoderModule();
 
 		var loader = new THREE.GLTFLoader();
 		loader.setDRACOLoader(dracoLoader);
-		loader.load( 'opera_apple_store/modelDraco.gltf', function ( gltf ) {
+		loader.load( 'opera_apple_store/modelDraco2.gltf', function ( gltf ) {
 
 			// gltf.scene.traverse( function ( child ) {
 

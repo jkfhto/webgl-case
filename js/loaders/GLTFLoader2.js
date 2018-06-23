@@ -458,7 +458,7 @@ THREE.GLTFLoader = ( function () {
 	}
 
 	/**
-	 * DRACO Mesh Compression Extension
+	 * DRACO Mesh Compression Extension  DRACO网格压缩扩展
 	 *
 	 * Specification: https://github.com/KhronosGroup/glTF/pull/874
 	 */
