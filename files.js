@@ -13,6 +13,7 @@ var files = {
 		"素描效果_sketch-rendering/index",
 		"溶解效果_Dissolving/index",
 		"高度雾效果_Vertical Fog/index",
+		"高度雾效果(使用Draco编码)_Vertical-Fog-draco/index",
 		"简单的城市_city/index",
 	]
 };
